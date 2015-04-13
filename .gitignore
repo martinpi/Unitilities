@@ -6,6 +6,7 @@
 **/UnityGenerated/*
 **/Library/*
 **/Scripts - external/*
+*.meta
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
