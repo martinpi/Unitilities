@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+This file licenesed under The GNU General Public License (GPLv3)
+Source: http://www.codeproject.com/Tips/381509/Math-Parser-NET-Csharp
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Collections;
 

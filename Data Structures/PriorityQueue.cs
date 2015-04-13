@@ -7,16 +7,15 @@
 //
 //  Email:  gustavo_franco@hotmail.com
 //
+//  Copyright (C) 2015 Martin Pichlmair
 //  Copyright (C) 2006 Franco, Gustavo 
 //
 // EDIT 2010 by Christoph Husse: Update() method didn't work correctly. Also
 // each item is now carrying an index, so that updating can be performed
 // efficiently.
 //
-//using System;
-//using System.Collections;
+
 using System.Collections.Generic;
-//using System.Diagnostics;
 
 public interface IIndexedObject
 {
