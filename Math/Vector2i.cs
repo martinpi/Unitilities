@@ -172,6 +172,16 @@ public static class Vector3Extensions {
 		return new Vector2i (Mathf.RoundToInt(vector3.x), Mathf.RoundToInt(vector3.y));
 	}
 
+	public static Vector2 Vector2XY (this Vector3 vector3) {
+		return new Vector2 (vector3.x, vector3.y);
+	}
+	public static Vector2 Vector2XZ (this Vector3 vector3) {
+		return new Vector2 (vector3.x, vector3.z);
+	}
+	public static Vector2 Vector2YZ (this Vector3 vector3) {
+		return new Vector2 (vector3.y, vector3.z);
+	}
+
 	public static Vector2 IncrementToward(this Vector3 n, Vector3 target, float a) {
 		float dist = (target-n).magnitude;
 		if (dist < Mathf.Epsilon) return target;
