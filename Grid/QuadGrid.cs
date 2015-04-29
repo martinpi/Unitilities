@@ -45,10 +45,9 @@ public class QuadGrid : MonoBehaviour {
 		rend.material = material;
 		
 		CreateQuadMesh();
-		
+		Color color = Color.white;
 		colors = new Color[columns * rows * 4];
 		for (int i = 0; i < colors.Length; i+=4) {
-			Color color = Color.white;
 			for (int j = 0; j < 4; j++) {
 				colors[i+j] = color;
 			}
@@ -74,12 +73,12 @@ public class QuadGrid : MonoBehaviour {
 		float vertSpacing = 2.0f * cellRadius;
 		float horzSpacing = 2.0f * cellRadius;
 		
-		Vector3 currPos = new Vector3(-columns / 2.0f * horzSpacing, rows / 2.0f * vertSpacing, 0.0f); 
+		Vector3 currPos = new Vector3(-columns / 2.0f * horzSpacing, 0.0f, rows / 2.0f * vertSpacing); 
 		
 		Vector3[] quadVerts = new Vector3[4];
 		quadVerts[0] = Vector3.zero;
-		quadVerts[1] = Vector3.up * horzSpacing;
-		quadVerts[2] = Vector3.right * vertSpacing + Vector3.up * horzSpacing;
+		quadVerts[1] = Vector3.forward * horzSpacing;
+		quadVerts[2] = Vector3.right * vertSpacing + Vector3.forward * horzSpacing;
 		quadVerts[3] = Vector3.right * vertSpacing;
 
 		Vector3[] vertices = new Vector3[rows * columns * 4];
@@ -89,10 +88,10 @@ public class QuadGrid : MonoBehaviour {
 				for (int k = 0; k < quadVerts.Length; k++) {
 					vertices[currVert++] = quadVerts[k] + currPos;
 				}
-				currPos.y -= vertSpacing;
+				currPos.z -= vertSpacing;
 			}
 			currPos.x += horzSpacing;
-			currPos.y = rows / 2.0f * vertSpacing;
+			currPos.z = rows / 2.0f * vertSpacing;
 		}
 		
 		//Create the triangles
