@@ -119,5 +119,22 @@ namespace Utils {
 			return p;
 		}
 
+		/* Linear normalized ADSR: a,s,r are percent. a always goes from 0 to 1 and r down to 0 again.
+		   Create an ASR envelope by setting df = 1f */
+		public static float NormalizedLinearADSR(float a, float df, float s, float r, float factor) {
+			float f = Mathf.Clamp01(factor);
+			/* a: duration 0 -> 1 .. df: 1 -> df .. s: duration df -> df .. r: duration 0.5 -> 0 */
+			float de = (1f-r-s);
+			float d = (1f-r-s-a);
+			float se = (1f-r);
+
+			return f <  a ? f/a : 
+				 ( f < de ? ( df + (d+a-f)/d * (1f-df) ) : 
+				 ( f < se ? df : 
+				 ( (1f-f)/r * df )));
+		}
+		public static float NormalizedLinearASR(float a, float s, float r, float factor) {
+			return NormalizedLinearADSR(a,1f,s,r,factor);
+		}
 	}
 }
