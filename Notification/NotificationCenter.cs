@@ -38,10 +38,8 @@ public enum NotificationType {
 	PostPostInit,
 	InitDone,
 
-	Refresh,
+	Custom,
 
-	Shutdown,
-	
 	TotalNotifications
 };
 
