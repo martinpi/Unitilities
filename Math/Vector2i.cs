@@ -166,6 +166,18 @@ public static class Vector2Extensions {
 		if (dist < Mathf.Epsilon) return target;
 		return n + Vector2.ClampMagnitude(target-n, Mathf.Min(dist, a));
 	}
+
+	public static Vector2 FlipY(this Vector2 n) {
+		float x = n.x;
+		n.x = -n.y;
+		n.y = x;
+		return n;
+	}
+
+	public static Vector3 Vector2XY (this Vector2 vector2) {
+		return new Vector3 (vector2.x, vector2.y, 0f);
+	}
+
 }
 public static class Vector3Extensions {
 	public static Vector2i Vector2i (this Vector3 vector3) {
