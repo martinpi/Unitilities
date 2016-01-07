@@ -31,6 +31,8 @@ namespace Utils {
 
 		/* based on http://forum.unity3d.com/threads/how-to-get-list-of-assets-at-asset-path.18898/ */
 		/* usage: Object[] objects = Utils.GetObjectsAtPath<AudioClip>("/Path/To/Music"); */
+
+#if UNITY_EDITOR
 		public static T[] GetObjectsAtPath<T>(string path) {
 			
 			ArrayList al = new ArrayList();
@@ -53,6 +55,7 @@ namespace Utils {
 			
 			return result;
 		}
+#endif
 
 		public static string[] ListObjectsAtPath(string path, string extension) {
 			ArrayList al = new ArrayList();

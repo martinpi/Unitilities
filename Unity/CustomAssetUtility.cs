@@ -23,14 +23,17 @@ THE SOFTWARE.
 */
 
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.IO;
 
 public static class CustomAssetUtility
 {
     public static void CreateAsset<T> () where T : ScriptableObject
     {
-        T asset = ScriptableObject.CreateInstance<T> ();
+		#if UNITY_EDITOR
+		T asset = ScriptableObject.CreateInstance<T> ();
         
         string path = AssetDatabase.GetAssetPath (Selection.activeObject);
         if (path == "") 
@@ -47,7 +50,8 @@ public static class CustomAssetUtility
         AssetDatabase.CreateAsset (asset, assetPathAndName);
         
         AssetDatabase.SaveAssets ();
-        EditorUtility.FocusProjectWindow ();
+		EditorUtility.FocusProjectWindow ();
         Selection.activeObject = asset;
-    }
+		#endif
+	}
 }

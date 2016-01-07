@@ -41,17 +41,17 @@ public class Stock : MonoBehaviour {
 	public Dictionary<string,StoredResource> GetStock() { return _stock; }
 
 	public void EnableAllGoods() {
-		foreach (Resource r in Resource.All.Values) {
-
-			StoredResource stored;
-			stored.Description = _economyManager.GetResource(stored.Description.ID);
-			stored.Amount = 0;
-			stored.Price = 0;
-			stored.PriceSale = 0;
-
-			_stock.Add(r.ID, stored);
-			_stockLimits.Add(stored.Description.ID, 10f);
-		}
+//		foreach (Resource r in Resource.All.Values) {
+//
+//			StoredResource stored;
+//			stored.Description = _economyManager.GetResource(stored.Description.ID);
+//			stored.Amount = 0;
+//			stored.Price = 0;
+//			stored.PriceSale = 0;
+//
+//			_stock.Add(r.ID, stored);
+//			_stockLimits.Add(stored.Description.ID, 10f);
+//		}
 
 	}
 
