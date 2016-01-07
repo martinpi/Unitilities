@@ -177,7 +177,6 @@ public static class Vector2Extensions {
 	public static Vector3 Vector2XY (this Vector2 vector2) {
 		return new Vector3 (vector2.x, vector2.y, 0f);
 	}
-
 }
 public static class Vector3Extensions {
 	public static Vector2i Vector2i (this Vector3 vector3) {
