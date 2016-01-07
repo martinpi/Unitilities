@@ -55,6 +55,10 @@ public class ShuffleBag<T> : ICollection<T>, IList<T>
 		return temp;
 	}
 
+	public bool Empty() {
+		return (cursor < 1);
+	}
+
 	//This Constructor will let you do this: ShuffleBag<int> intBag = new ShuffleBag<int>(new int[] {1, 2, 3, 4, 5});
 	public ShuffleBag(T[] initalValues) {
 		for (int i = 0; i < initalValues.Length; i++) {
@@ -101,7 +105,6 @@ public class ShuffleBag<T> : ICollection<T>, IList<T>
 	#region ICollection[T] implementation
 	public void Add (T item)
 	{
-		//Debug.Log (item);
 		data.Add (item);
 		cursor = data.Count - 1;
 	}
