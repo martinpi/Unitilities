@@ -50,122 +50,128 @@
 
 using UnityEngine;
 
-public struct ColorHSV
-{
-    public float h;
-    public float s;
-    public float v;
-    public float a;
+namespace Unitilities {
+	namespace Color {
+		
+		public struct ColorHSV
+		{
+		    public float h;
+		    public float s;
+		    public float v;
+		    public float a;
 
-    public ColorHSV(float h, float s, float v, float a)
-    {
-        this.h = h;
-        this.s = s;
-        this.v = v;
-        this.a = a;
-    }
+		    public ColorHSV(float h, float s, float v, float a)
+		    {
+		        this.h = h;
+		        this.s = s;
+		        this.v = v;
+		        this.a = a;
+		    }
 
-    public override string ToString()
-    {
-        return string.Format("HSVA: ({0:F3}, {1:F3}, {2:F3}, {3:F3})", h, s, v, a);
-    }
+		    public override string ToString()
+		    {
+		        return string.Format("HSVA: ({0:F3}, {1:F3}, {2:F3}, {3:F3})", h, s, v, a);
+		    }
 
-    public static bool operator ==(ColorHSV lhs, ColorHSV rhs)
-    {
-        if (lhs.a != rhs.a)
-        {
-            return false;
-        }
+		    public static bool operator ==(ColorHSV lhs, ColorHSV rhs)
+		    {
+		        if (lhs.a != rhs.a)
+		        {
+		            return false;
+		        }
 
-        if (lhs.v == 0 && rhs.v == 0)
-        {
-            return true;
-        }
+		        if (lhs.v == 0 && rhs.v == 0)
+		        {
+		            return true;
+		        }
 
-        if (lhs.s == 0 && rhs.s == 0)
-        {
-            return lhs.v == rhs.v;
-        }
+		        if (lhs.s == 0 && rhs.s == 0)
+		        {
+		            return lhs.v == rhs.v;
+		        }
 
-        return lhs.h == rhs.h &&
-               lhs.s == rhs.s &&
-               lhs.v == rhs.v;
-    }
+		        return lhs.h == rhs.h &&
+		               lhs.s == rhs.s &&
+		               lhs.v == rhs.v;
+		    }
 
-    public static implicit operator ColorHSV(Color c)
-    {
-        return c.ToHSV();
-    }
+			public static implicit operator ColorHSV(UnityEngine.Color c)
+		    {
+		        return c.ToHSV();
+		    }
 
-    public static implicit operator Color(ColorHSV hsv)
-    {
-        return hsv.ToRGB();
-    }
+			public static implicit operator UnityEngine.Color(ColorHSV hsv)
+		    {
+		        return hsv.ToRGB();
+		    }
 
-    public static implicit operator ColorHSV(Color32 c32)
-    {
-        return ((Color) c32).ToHSV();
-    }
+			public static implicit operator ColorHSV(Color32 c32)
+		    {
+				return ((UnityEngine.Color) c32).ToHSV();
+		    }
 
-    public static implicit operator Color32(ColorHSV hsv)
-    {
-        return hsv.ToRGB();
-    }
+		    public static implicit operator Color32(ColorHSV hsv)
+		    {
+		        return hsv.ToRGB();
+		    }
 
-    public static bool operator !=(ColorHSV lhs, ColorHSV rhs)
-    {
-        return !(lhs == rhs);
-    }
+		    public static bool operator !=(ColorHSV lhs, ColorHSV rhs)
+		    {
+		        return !(lhs == rhs);
+		    }
 
-    public override bool Equals(object other)
-    {
-        if (other == null)
-        {
-            return false;
-        }
+		    public override bool Equals(object other)
+		    {
+		        if (other == null)
+		        {
+		            return false;
+		        }
 
-        if (other is ColorHSV || other is Color || other is Color32)
-        {
-            return this == (ColorHSV) other;
-        }
+				if (other is ColorHSV || other is UnityEngine.Color || other is Color32)
+		        {
+		            return this == (ColorHSV) other;
+		        }
 
-        return false;
-    }
+		        return false;
+		    }
 
-    public override int GetHashCode()
-    {
-        // This is maybe not a good implementation :)
-        return ((Color) this).GetHashCode();
-    }
+		    public override int GetHashCode()
+		    {
+		        // This is maybe not a good implementation :)
+		        return ((UnityEngine.Color) this).GetHashCode();
+		    }
 
-    public Color ToRGB()
-    {
-        Vector3 rgb = HUEtoRGB(h);
-        Vector3 vc = ((rgb - Vector3.one) * s + Vector3.one) * v;
+			public UnityEngine.Color ToRGB()
+		    {
+		        Vector3 rgb = HUEtoRGB(h);
+		        Vector3 vc = ((rgb - Vector3.one) * s + Vector3.one) * v;
 
-        return new Color(vc.x, vc.y, vc.z, a);
-    }
+				return new UnityEngine.Color(vc.x, vc.y, vc.z, a);
+		    }
 
-    private static Vector3 HUEtoRGB(float h)
-    {
-        float r = Mathf.Abs(h * 6 - 3) - 1;
-        float g = 2 - Mathf.Abs(h * 6 - 2);
-        float b = 2 - Mathf.Abs(h * 6 - 4);
+		    private static Vector3 HUEtoRGB(float h)
+		    {
+		        float r = Mathf.Abs(h * 6 - 3) - 1;
+		        float g = 2 - Mathf.Abs(h * 6 - 2);
+		        float b = 2 - Mathf.Abs(h * 6 - 4);
 
-        return new Vector3(Mathf.Clamp01(r), Mathf.Clamp01(g), Mathf.Clamp01(b));
-    }
+		        return new Vector3(Mathf.Clamp01(r), Mathf.Clamp01(g), Mathf.Clamp01(b));
+		    }
+		}
+	}
 }
+
 
 public static class ColorExtension
 {
     private const float EPSILON = 1e-10f;
 
-    public static ColorHSV ToHSV(this Color rgb)
+	public static Unitilities.Color.ColorHSV ToHSV(this Color rgb)
     {
         Vector3 hcv = RGBtoHCV(rgb);
         float s = hcv.y / (hcv.z + EPSILON);
 
-        return new ColorHSV(hcv.x, s, hcv.z, rgb.a);
+		return new Unitilities.Color.ColorHSV(hcv.x, s, hcv.z, rgb.a);
     }
 
     private static Vector3 RGBtoHCV(Color rgb)
