@@ -55,15 +55,21 @@ public class ShuffleBag<T> : ICollection<T>, IList<T>
 		return temp;
 	}
 
+	public T[] Data() {
+		return data.ToArray();
+	}
+	public void FromArray(T[] values) {
+		Clear();
+		for (int i = 0; i < values.Length; i++) 
+			Add (values[i]);
+	}
 	public bool Empty() {
 		return (cursor < 1);
 	}
 
 	//This Constructor will let you do this: ShuffleBag<int> intBag = new ShuffleBag<int>(new int[] {1, 2, 3, 4, 5});
-	public ShuffleBag(T[] initalValues) {
-		for (int i = 0; i < initalValues.Length; i++) {
-			Add (initalValues[i]);
-		}
+	public ShuffleBag(T[] initialValues) {
+		FromArray(initialValues);
 	}
 	public ShuffleBag() {} //Constructor with no values
 
