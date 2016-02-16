@@ -1,6 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/*
+ * EXAMPLE CODE
+ * 
+	int _screenshotNumber = 0;
+	IEnumerator TakeRandomScreenshot(float minDelay) {
+		float delay = minDelay + Random.value * minDelay;
+		yield return new WaitForSeconds(delay);
+
+		string devicename = SystemInfo.deviceModel + "_" + SystemInfo.deviceName;
+		devicename = devicename.Replace(',','_').Replace('/','_').Replace('\\','_').Replace('.','_').Replace(' ','_');
+
+		string filename = Application.persistentDataPath+"/SZ_"+devicename+"_"+_score+".png";
+		Application.CaptureScreenshot(filename);
+
+		// wait for screenshot to be stored
+		yield return new WaitForSeconds(5f);
+		if (UploadScreenshots)
+			GetComponent<UploadFile>().UploadPNG(filename,"http://brokenrul.es/pi/SUMZERO/upload.php");
+		
+//		Debug.Log("Screenshot "+_screenshotNumber+" taken");
+
+		_screenshotNumber++;
+		StartCoroutine(TakeRandomScreenshot(minDelay));
+	}
+*/
+
 namespace Unitilities {
 	public class FileUploader {
 
@@ -8,10 +34,7 @@ namespace Unitilities {
 		{
 			WWW localFile = new WWW("file:///" + localFileName);
 			yield return localFile;
-			if (localFile.error == null)
-				Debug.Log("Loaded file successfully");
-			else
-			{
+			if (localFile.error != null) {
 				Debug.Log("Open file error: "+localFile.error);
 				yield break; // stop the coroutine here
 			}
@@ -22,9 +45,7 @@ namespace Unitilities {
 			postForm.AddBinaryData("theFile",localFile.bytes, localFileName, mimeType);
 			WWW upload = new WWW(uploadURL,postForm);        
 			yield return upload;
-			if (upload.error == null)
-				Debug.Log("upload done :" + upload.text);
-			else
+			if (upload.error != null)
 				Debug.Log("Error during upload: " + upload.error);
 		}
 
