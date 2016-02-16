@@ -2,7 +2,7 @@
 using System.Collections;
 
 /*
- * EXAMPLE CODE
+ * EXAMPLE CODE – Uploading a screenshot
  * 
 	int _screenshotNumber = 0;
 	IEnumerator TakeRandomScreenshot(float minDelay) {
@@ -12,19 +12,25 @@ using System.Collections;
 		string devicename = SystemInfo.deviceModel + "_" + SystemInfo.deviceName;
 		devicename = devicename.Replace(',','_').Replace('/','_').Replace('\\','_').Replace('.','_').Replace(' ','_');
 
-		string filename = Application.persistentDataPath+"/SZ_"+devicename+"_"+_score+".png";
-		Application.CaptureScreenshot(filename);
+		string filename = "SZ_"+devicename+"_"+_score+".png";
+		string filepath = filename;
+		#if UNITY_EDITOR
+		filepath = Application.persistentDataPath+"/"+filepath;
+		#endif
+
+		Application.CaptureScreenshot(filepath);
 
 		// wait for screenshot to be stored
 		yield return new WaitForSeconds(5f);
 		if (UploadScreenshots)
-			GetComponent<UploadFile>().UploadPNG(filename,"http://brokenrul.es/pi/SUMZERO/upload.php");
+			GetComponent<UploadFile>().UploadPNG(Application.persistentDataPath+"/"+filename,"http://brokenrul.es/pi/SUMZERO/upload.php");
 		
 //		Debug.Log("Screenshot "+_screenshotNumber+" taken");
 
 		_screenshotNumber++;
 		StartCoroutine(TakeRandomScreenshot(minDelay));
 	}
+}
 */
 
 namespace Unitilities {
@@ -39,9 +45,6 @@ namespace Unitilities {
 				yield break; // stop the coroutine here
 			}
 			WWWForm postForm = new WWWForm();
-			// version 1
-			//postForm.AddBinaryData("theFile",localFile.bytes);
-			// version 2
 			postForm.AddBinaryData("theFile",localFile.bytes, localFileName, mimeType);
 			WWW upload = new WWW(uploadURL,postForm);        
 			yield return upload;
