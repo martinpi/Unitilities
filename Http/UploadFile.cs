@@ -35,9 +35,7 @@ using System.Collections;
 
 namespace Unitilities {
 	public class FileUploader {
-
-		public IEnumerator UploadFileCo(string localFileName, string uploadURL, string mimeType = "text/plain")
-		{
+		public IEnumerator UploadFileCo(string localFileName, string uploadURL, string mimeType = "text/plain") {
 			WWW localFile = new WWW("file:///" + localFileName);
 			yield return localFile;
 			if (localFile.error != null) {
@@ -51,8 +49,6 @@ namespace Unitilities {
 			if (upload.error != null)
 				Debug.Log("Error during upload: " + upload.error);
 		}
-
-
 	}
 }
 
