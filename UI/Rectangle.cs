@@ -34,7 +34,7 @@ public class Rectangle : Graphic
 {
 	protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
 	{
-		UIVertex[] vbo = new UIVertex[4];
+		UIVertex[] vbo = new UIVertex[vertices.Length];
 		for (int i = 0; i < vertices.Length; i++)
 		{
 			var vert = UIVertex.simpleVert;
