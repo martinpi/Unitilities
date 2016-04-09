@@ -41,7 +41,7 @@ namespace Unitilities
 				m_LookAheadPos = Vector3.MoveTowards(m_LookAheadPos, Vector3.zero, Time.deltaTime*lookAheadReturnSpeed);
 
 			Vector3 aheadTargetPos = target.position + m_LookAheadPos + Vector3.forward*m_Offset.z;
-			Vector3 newPos = Vector3.SmoothDamp(transform.position, aheadTargetPos, ref m_CurrentVelocity, damping);
+			Vector3 newPos = Vector3.SmoothDamp(transform.position, aheadTargetPos, ref m_CurrentVelocity, damping );
 
 			if (fixedX) newPos.x = m_Offset.x;
 			if (fixedY) newPos.y = m_Offset.y;
