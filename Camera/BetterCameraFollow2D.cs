@@ -5,6 +5,9 @@ namespace Unitilities
 {
 	public class BetterCameraFollow2D : MonoBehaviour
 	{
+		public float LookAheadFactor { get { return lookAheadFactor; } set { lookAheadFactor = value; } }
+		public float Damping { get { return damping; } set { damping = value; } }
+
 		public Transform target;
 		public float damping = 1;
 		public float lookAheadFactor = 3;
