@@ -28,94 +28,70 @@ THE SOFTWARE.
 
 using UnityEngine;
 
+[ExecuteInEditMode, RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class QuadGrid : MonoBehaviour {
 	
 	public int columns      = 10; 
 	public int rows         = 10;
 	public float cellRadius = 0.5f;
-	public Material material;
-	
-	private Color[] colors;
+
 	private Mesh mesh;
-	
-	void Start () {
-		MeshRenderer rend = gameObject.GetComponent<MeshRenderer>();
-		if (rend == null)
-			rend = gameObject.AddComponent<MeshRenderer>();
-		rend.material = material;
-		
-		CreateQuadMesh();
-		Color color = Color.white;
-		colors = new Color[columns * rows * 4];
-		for (int i = 0; i < colors.Length; i+=4) {
-			for (int j = 0; j < 4; j++) {
-				colors[i+j] = color;
-			}
-		}
-		mesh.colors = colors;
+	private Vector3[] vertices;
 
-//		Random.seed = 0;
-//		float[,] grid = new float[columns, rows];
-//		for (int i = 0; i < grid.GetLength(0); ++i)
-//			for (int j = 0; j < grid.GetLength(1); ++j)
-//				grid[i,j] = Random.value;
-//		grid = GridUtils.average(grid, 1, 0.1f);
-//		this.SetColorFromGrid(grid, Color.cyan);
+	void Awake () {
+		CreateGrid(rows, columns);
 	}	
-	
-	void CreateQuadMesh() {
-		MeshFilter mf = gameObject.GetComponent<MeshFilter>();
-		if (mf == null)
-			mf = gameObject.AddComponent<MeshFilter>();
-		mesh = new Mesh();
-		mf.mesh = mesh;
-		
-		float vertSpacing = 2.0f * cellRadius;
-		float horzSpacing = 2.0f * cellRadius;
-		
-		Vector3 currPos = new Vector3(-columns / 2.0f * horzSpacing, 0.0f, rows / 2.0f * vertSpacing); 
-		
-		Vector3[] quadVerts = new Vector3[4];
-		quadVerts[0] = Vector3.zero;
-		quadVerts[1] = Vector3.forward * horzSpacing;
-		quadVerts[2] = Vector3.right * vertSpacing + Vector3.forward * horzSpacing;
-		quadVerts[3] = Vector3.right * vertSpacing;
 
-		Vector3[] vertices = new Vector3[rows * columns * 4];
-		int currVert = 0;
-		for (int i = 0; i < columns; i++) {
-			for (int j = 0; j < rows; j++) {
-				for (int k = 0; k < quadVerts.Length; k++) {
-					vertices[currVert++] = quadVerts[k] + currPos;
-				}
-				currPos.z -= vertSpacing;
+	public void CreateGrid(int rows, int columns) {
+		this.columns = columns;
+		this.rows = rows;
+		CreateQuadMesh();
+	}
+
+	void CreateQuadMesh() {
+		GetComponent<MeshFilter>().sharedMesh = mesh = new Mesh();
+		mesh.name = "Procedural Grid";
+
+		vertices = new Vector3[(columns + 1) * (rows + 1)];
+		Vector2[] uv = new Vector2[vertices.Length];
+		Vector4[] tangents = new Vector4[vertices.Length];
+		Vector4 tangent = new Vector4(1f, 0f, 0f, -1f);
+		for (int i = 0, y = 0; y <= rows; y++) {
+			for (int x = 0; x <= columns; x++, i++) {
+				vertices[i] = new Vector3(x, y);
+				uv[i] = new Vector2((float)x / columns, (float)y / rows);
+				tangents[i] = tangent;
 			}
-			currPos.x += horzSpacing;
-			currPos.z = rows / 2.0f * vertSpacing;
 		}
-		
-		//Create the triangles
-		int curr = 0;
-		int[] triangles = new int[rows * columns * 4 * 3];
-		for (int i = 0; i < columns * rows * 4; i += 4) {
-			triangles[curr++] = i+0;
-			triangles[curr++] = i+1;
-			triangles[curr++] = i+2;
-			
-			triangles[curr++] = i+0;
-			triangles[curr++] = i+2;
-			triangles[curr++] = i+3;
+
+		Color colorT = Color.red;
+		Color[] colors = new Color[vertices.Length];
+		for (int i = 0; i < colors.Length; i++) {
+			if ((i % 3) == 0)
+				colorT = new Color(Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), 1.0f);
+			colors[i] = colorT;
 		}
-		
-		mf.mesh.vertices = vertices;
-		mf.mesh.triangles = triangles;
-		mf.mesh.colors = colors;
-		mf.mesh.RecalculateBounds();
-		mf.mesh.RecalculateNormals();
+
+		int[] triangles = new int[columns * rows * 6];
+		for (int ti = 0, vi = 0, y = 0; y < rows; y++, vi++) {
+			for (int x = 0; x < columns; x++, ti += 6, vi++) {
+				triangles[ti] = vi;
+				triangles[ti + 3] = triangles[ti + 2] = vi + 1;
+				triangles[ti + 4] = triangles[ti + 1] = vi + columns + 1;
+				triangles[ti + 5] = vi + columns + 2;
+			}
+		}
+		mesh.vertices = vertices;
+		mesh.colors = colors;
+		mesh.uv = uv;
+		mesh.tangents = tangents;
+		mesh.triangles = triangles;
+		mesh.RecalculateNormals();
+
 	}
 	
 	
-	void SetColor(int row, int col, Color color) {
+	public void SetColor(int row, int col, Color color) {
 		if (row < 0 || row >= rows) return;
 		if (col < 0 || col >= columns) return;
 		
@@ -128,14 +104,46 @@ public class QuadGrid : MonoBehaviour {
 		mesh.colors = colors;
 	}
 
-	void SetColorFromGrid(float[,] grid, Color mask) {
+	public void SetBrightnessFromGrid(float[,] grid, Color mask) {
 		if (grid.GetLength(0) != columns || grid.GetLength(1) != rows)
 			return;
 
-		colors = new Color[columns * rows * 4];
+		Color[] colors = new Color[columns * rows * 4];
 		for (int y = 0; y < rows; ++y) {
 			for (int x = 0; x < columns; ++x) {
 				Color color = new Color(mask.r * grid[x,y], mask.g * grid[x,y], mask.b * grid[x,y], 1f);
+				for (int j = 0; j < 4; j++) {
+					colors[(x+y*columns)*4 + j] = color;
+				}
+			}
+		}
+		mesh.colors = colors;
+	}
+
+	int GetMax(int[,] grid) {
+		if (grid.GetLength(0) != columns || grid.GetLength(1) != rows)
+			return -1;
+		
+		int max = 0;
+		for (int y = 0; y < rows; ++y) 
+			for (int x = 0; x < columns; ++x) 
+				max = Mathi.Max(grid[x,y], max);
+			
+		return max;
+	}
+
+	public void SetBrightnessFromGrid(int[,] grid, Color mask, int max = -1) {
+		if (grid.GetLength(0) != columns || grid.GetLength(1) != rows)
+			return;
+
+		if (max <= 0) max = GetMax(grid);
+
+		float fmax = (float)max;
+		Color[] colors = new Color[columns * rows * 4];
+		for (int y = 0; y < rows; ++y) {
+			for (int x = 0; x < columns; ++x) {
+				float fgrid = ((float)grid[x,y]) / fmax;
+				Color color = new Color(mask.r * fgrid, mask.g * fgrid, mask.b * fgrid, 1f);
 				for (int j = 0; j < 4; j++) {
 					colors[(x+y*columns)*4 + j] = color;
 				}
