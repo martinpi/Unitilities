@@ -24,12 +24,16 @@ THE SOFTWARE.
 
 using System;
 using UnityEngine;
+using Serializable = System.SerializableAttribute;
 
+[System.Serializable]
 public struct Vector2i
 {
+	[SerializeField]
 	public int x;
+	[SerializeField]
 	public int y;
-	
+
 	public Vector2i(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -154,6 +158,7 @@ public struct Vector2i
 		uint wrapped = number >> (32 - positions);
 		return BitConverter.ToInt32(BitConverter.GetBytes((number << positions) | wrapped), 0);
 	}
+
 }
 
 public static class Vector2Extensions {
@@ -179,10 +184,12 @@ public static class Vector2Extensions {
 	}
 }
 public static class Vector3Extensions {
-	public static Vector2i Vector2i (this Vector3 vector3) {
-		return new Vector2i (Mathf.RoundToInt(vector3.x), Mathf.RoundToInt(vector3.y));
+	public static Vector2i Vector2i (this Vector2 vector2) {
+		return new Vector2i (Mathf.RoundToInt(vector2.x), Mathf.RoundToInt(vector2.y));
 	}
-
+	public static Vector2 Vector2 (this Vector2i vector2i) {
+		return new Vector2 (vector2i.x, vector2i.y);
+	}
 	public static Vector2 Vector2XY (this Vector3 vector3) {
 		return new Vector2 (vector3.x, vector3.y);
 	}
@@ -192,6 +199,15 @@ public static class Vector3Extensions {
 	public static Vector2 Vector2YZ (this Vector3 vector3) {
 		return new Vector2 (vector3.y, vector3.z);
 	}
+	public static Vector2i Vector2iXY (this Vector3 vector3) {
+		return new Vector2i (Mathf.RoundToInt(vector3.x), Mathf.RoundToInt(vector3.y));
+	}
+	public static Vector2i Vector2iXZ (this Vector3 vector3) {
+		return new Vector2i (Mathf.RoundToInt(vector3.x), Mathf.RoundToInt(vector3.z));
+	}
+	public static Vector2i Vector2iYZ (this Vector3 vector3) {
+		return new Vector2i (Mathf.RoundToInt(vector3.y), Mathf.RoundToInt(vector3.z));
+	}
 
 	public static Vector2 IncrementToward(this Vector3 n, Vector3 target, float a) {
 		float dist = (target-n).magnitude;
@@ -199,8 +215,6 @@ public static class Vector3Extensions {
 		return n + Vector3.ClampMagnitude(target-n, Mathf.Min(dist, a));
 	}
 }
-
-
 
 /* 
 
