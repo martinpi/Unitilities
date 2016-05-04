@@ -63,7 +63,7 @@ public class WeightedPathFinder : MonoBehaviour {
 		return (_aStar.Search(from, to, grid).Count <= steps);
 	}
 
-	void Start() {
+	void Test() {
 		int w = Width, h = Height;
 		CreateGrid(w,h);
 		float[,] test = new float[w,h];

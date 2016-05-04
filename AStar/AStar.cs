@@ -199,9 +199,7 @@ namespace Pathfinding
                     //elapsed.Add(watch.ElapsedMilliseconds);
 
                     LinkedList<TPathNode> result = ReconstructPath(m_CameFrom, m_CameFrom[endNode.X, endNode.Y]);
-
                     result.AddLast(endNode.UserContext);
-
                     return result;
                 }
 
