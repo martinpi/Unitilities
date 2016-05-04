@@ -183,4 +183,16 @@ public static class ColorExtension
 
         return new Vector3(h, c, q.x);
     }
+
+	public static Color32 ToColor32(this Color rgb) {
+		return new Color32((byte)(rgb.r * 255f),(byte)(rgb.g * 255f),(byte)(rgb.b * 255f),(byte)(rgb.a * 255f));
+	}
+
+	public static Color ToColor(this Color32 color) {
+		return new Color(((float)color.r)/255f, ((float)color.g)/255f, ((float)color.b)/255f, ((float)color.a)/255f);
+	}
+
+	public static int ToInt(this Color32 color) {
+		return (int) color.r << 24 + color.g << 16 + color.b << 8 + color.a;
+	}
 }
