@@ -73,6 +73,12 @@ public class ShuffleBag<T> : ICollection<T>, IList<T>
 	}
 	public ShuffleBag() {} //Constructor with no values
 
+	public void Add (T[] items)
+	{
+		for (int i = 0; i < items.Length; i++) 
+			Add (items[i]);
+	}
+
 	#region IList[T] implementation
 	public int IndexOf (T item)
 	{
