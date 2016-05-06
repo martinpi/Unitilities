@@ -137,6 +137,11 @@ namespace Utils {
 			return NormalizedLinearADSR(a,1f,s,r,factor);
 		}
 
+		public static Vector2i DirectionToVector(int i) {
+			return new Vector2i( (i > 0 && i < 4) ? 1 : (i > 4) ? -1 : 0, 
+								 (i > 2 && i < 6) ? 1 : (i == 2 || i == 6) ? 0 : -1 );
+		}
+
 		/* 
 		static unsigned long x=123456789,y=362436069,z=521288629,w=88675123,v=886756453;
       	// replace defaults with five random seed values in calling program
