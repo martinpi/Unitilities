@@ -152,3 +152,11 @@ namespace Utils {
 		*/
 	}
 }
+
+public static class Boundsxtension
+{
+	public static bool ContainBounds(this Bounds bounds, Bounds target)
+	{
+		return bounds.Contains(target.min) && bounds.Contains(target.max);
+	}
+}
