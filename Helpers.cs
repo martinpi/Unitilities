@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Utils {
 
@@ -50,6 +51,9 @@ namespace Utils {
 			return newTile;
 		}
 
+		public static void ReloadScene() {
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		}
 	}
 
 }
