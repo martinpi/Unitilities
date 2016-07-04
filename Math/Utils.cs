@@ -159,4 +159,10 @@ public static class Boundsxtension
 	{
 		return bounds.Contains(target.min) && bounds.Contains(target.max);
 	}
+	public static bool ContainBoundsXY(this Bounds bounds, Bounds target)
+	{
+		return target.min.x >= bounds.min.x && target.max.x < bounds.max.x
+			&& target.min.y >= bounds.min.y && target.max.y < bounds.max.y;
+
+	}
 }
