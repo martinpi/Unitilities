@@ -28,6 +28,10 @@ namespace Utils {
 
 	public class Math {
 
+		public static float Round(float number, float precision) {
+			return Mathf.Round(number * 1f/precision) * precision;
+		}
+
 		public static double Clamp(double x, double bottom, double top) {
 			return x < bottom ? bottom : ( x > top ? top : x );
 		}
