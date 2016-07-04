@@ -33,13 +33,11 @@ namespace Unitilities
 		// Update is called once per frame
 		private void Update()
 		{
-			// only update lookahead pos if accelerating or changed direction
-			float xMoveDelta = (target.position - m_LastTargetPosition).y;
-
-			bool updateLookAheadTarget = Mathf.Abs(xMoveDelta) > lookAheadMoveThreshold;
+			Vector3 moveDirection = (target.position - m_LastTargetPosition);
+			bool updateLookAheadTarget = Mathf.Abs(moveDirection.magnitude) > lookAheadMoveThreshold;
 
 			if (updateLookAheadTarget)
-				m_LookAheadPos = lookAheadFactor*Vector3.up*Mathf.Sign(xMoveDelta);
+				m_LookAheadPos = lookAheadFactor*moveDirection;
 			else
 				m_LookAheadPos = Vector3.MoveTowards(m_LookAheadPos, Vector3.zero, Time.deltaTime*lookAheadReturnSpeed);
 
