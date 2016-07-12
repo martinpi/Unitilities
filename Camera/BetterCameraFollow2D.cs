@@ -21,18 +21,13 @@ namespace Unitilities
 		private Vector3 m_CurrentVelocity;
 		private Vector3 m_LookAheadPos;
 
-		// Use this for initialization
-		private void Start()
-		{
+		void Start() {
 			m_LastTargetPosition = target.position;
 			m_Offset = (transform.position - target.position);
 			transform.parent = null;
 		}
 
-
-		// Update is called once per frame
-		private void Update()
-		{
+		void Update() {
 			Vector3 moveDirection = (target.position - m_LastTargetPosition);
 			bool updateLookAheadTarget = Mathf.Abs(moveDirection.magnitude) > lookAheadMoveThreshold;
 

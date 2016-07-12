@@ -51,6 +51,13 @@ namespace Utils {
 			return newTile;
 		}
 
+		public static T Load<T>(string path) where T : Object {
+			T thing = (T) Resources.Load(path);
+			if (thing == null)
+				Debug.LogError("Couldn't load resource '"+typeof(T)+"' with path '"+path+"'");
+			return thing;
+		}
+
 		public static void ReloadScene() {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		}
