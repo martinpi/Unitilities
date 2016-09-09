@@ -16,6 +16,9 @@ namespace Unitilities
 		public bool fixedX = false;
 		public bool fixedY = false;
 
+		public bool unidirectionalX = false;
+		public bool unidirectionalY = false;
+
 		private Vector3 m_Offset;
 		private Vector3 m_LastTargetPosition;
 		private Vector3 m_CurrentVelocity;
@@ -25,6 +28,11 @@ namespace Unitilities
 			m_LastTargetPosition = target.position;
 			m_Offset = (transform.position - target.position);
 			transform.parent = null;
+		}
+
+		public void JumpToTarget() {
+			m_LookAheadPos = Vector3.zero;
+			transform.position = m_LastTargetPosition = target.position;
 		}
 
 		void Update() {
@@ -41,6 +49,9 @@ namespace Unitilities
 
 			if (fixedX) newPos.x = m_Offset.x;
 			if (fixedY) newPos.y = m_Offset.y;
+
+			if (unidirectionalX && newPos.x < transform.position.x) newPos.x = transform.position.x;
+			if (unidirectionalY && newPos.y < transform.position.y) newPos.y = transform.position.y;
 
 			transform.position = newPos;
 
