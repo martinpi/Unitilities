@@ -97,7 +97,7 @@ public class ObjectPool : MonoBehaviour
 			i++;
 		}
 	}
-	
+
 	/// <summary>
 	/// Gets a new object for the name type provided.  If no object type exists or if onlypooled is true and there is no objects of that type in the pool
 	/// then null will be returned.
