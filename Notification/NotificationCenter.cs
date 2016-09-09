@@ -30,117 +30,80 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum NotificationType {
-	None,
-	
-	Init = 1,
-	PostInit,
-	PostPostInit,
-	InitDone,
+namespace Unitilities {
+	public delegate void OnNotificationDelegate (Notification note);
 
-	Custom,
+	public sealed class NotificationCenter {
+		Dictionary<string, List<OnNotificationDelegate>> _listeners = new Dictionary<string, List<OnNotificationDelegate>>();
+		List<Pair<string,OnNotificationDelegate>>  _toRemove = new List<Pair<string, OnNotificationDelegate>>();
+		List<Notification> _scheduledNotifications = new List<Notification> ();
 
-	TotalNotifications
-};
+		static readonly NotificationCenter instance = new NotificationCenter();
+		static NotificationCenter() { }
+		public static NotificationCenter Instance { get { return instance; } }
 
-public delegate void OnNotificationDelegate (Notification note);
+		public void AddListener (OnNotificationDelegate newListenerDelegate, string key) {
+			if (!_listeners.ContainsKey(key))
+				_listeners[key] = new List<OnNotificationDelegate>();
+			_listeners[key].Add(newListenerDelegate);
+		}
 
-public class NotificationCenter {
-	public static NotificationCenter Instance = new NotificationCenter();
-	private ArrayList[] listeners = new ArrayList[(int)NotificationType.TotalNotifications];
-	private List<Notification> _scheduledNotifications = new List<Notification> ();
-	private ArrayList[] toRemove = new ArrayList[(int)NotificationType.TotalNotifications];
+		private void DoRemoveListener (OnNotificationDelegate listenerDelegate, string key) {
+			if (!_listeners.ContainsKey(key)) return;
+			if (_listeners[key].Contains (listenerDelegate))
+				_listeners[key].Remove (listenerDelegate);
+		}
 
-	public NotificationCenter () { }
-	
-	public void AddListener (OnNotificationDelegate newListenerDelegate, NotificationType type) {
-		int typeInt = (int)type;
+		private void DoRemoveListeners() {
+			foreach (Pair<string,OnNotificationDelegate> pair in _toRemove)
+				DoRemoveListener(pair.Second, pair.First);
+		}
 
-		if (listeners [typeInt] == null)
-			listeners [typeInt] = new ArrayList ();
+		public void RemoveListener (OnNotificationDelegate listenerDelegate, string key) {
+			_toRemove.Add(new Pair<string, OnNotificationDelegate>(key, listenerDelegate));
+		}
 
-		listeners [typeInt].Add (newListenerDelegate);
-	}
-
-	private void DoRemoveListener (OnNotificationDelegate listenerDelegate, NotificationType type) {
-		int typeInt = (int)type;
-
-		if (listeners [typeInt] == null)
-			return;
-
-		if (listeners [typeInt].Contains (listenerDelegate))
-			listeners [typeInt].Remove (listenerDelegate);
-
-		if (listeners [typeInt].Count == 0)
-			listeners [typeInt] = null;
-	}
-
-	private void DoRemoveListeners() {
-		for (int typeInt = 0; typeInt < (int)NotificationType.TotalNotifications; typeInt++) {
-			if (toRemove [typeInt] != null) {
-				foreach (OnNotificationDelegate dele in toRemove [typeInt])
-					DoRemoveListener(dele, (NotificationType)typeInt);
-
-				toRemove [typeInt].Clear();
-				toRemove [typeInt] = null;
+		public void RemoveListener (OnNotificationDelegate listenerDelegate) {
+			foreach (var kvp in _listeners) {
+				if (kvp.Value.Contains (listenerDelegate)) 
+					RemoveListener(listenerDelegate, kvp.Key);
 			}
 		}
-	}
 
-	public void RemoveListener (OnNotificationDelegate listenerDelegate, NotificationType type) {
-		int typeInt = (int)type;
-
-		if (toRemove [typeInt] == null)
-			toRemove [typeInt] = new ArrayList();
-		
-		toRemove [typeInt].Add(listenerDelegate);
-	}
-
-	public void RemoveListener (OnNotificationDelegate listenerDelegate) {
-		for (int typeInt = 0; typeInt < (int)NotificationType.TotalNotifications; typeInt++) {
-			if (listeners [typeInt] == null)
-				continue;
-			
-			if (listeners [typeInt].Contains (listenerDelegate)) {
-				if (toRemove [typeInt] == null)
-					toRemove [typeInt] = new ArrayList();
-
-				toRemove [typeInt].Add(listenerDelegate);
+		public void PostNotification (Notification note) {
+			foreach (OnNotificationDelegate delegateCall in _listeners[note.key]) {
+				delegateCall(note);
 			}
 		}
-	}
 
-	public void PostNotification (Notification note) {
-		int typeInt = (int)note.type;
-
-		if (listeners [typeInt] == null)
-			return;
-
-		foreach (OnNotificationDelegate delegateCall in listeners[typeInt]) {
-			delegateCall (note);
+		public void PostNotification ( string key, object userInfo=null ) {
+			PostNotification( new Notification(key, userInfo) );
 		}
-	}
 
-	public void PostNotification ( NotificationType typeInt, object userInfo=null ) {
-		PostNotification( new Notification(typeInt,userInfo) );
-	}
-    
-	public void ScheduleNotification (Notification note) {
-		_scheduledNotifications.Add (note);
-	}
+		public void ScheduleNotification (Notification note) {
+			_scheduledNotifications.Add (note);
+		}
 
-	public void ScheduleNotification ( NotificationType typeInt, object userInfo=null ) {
-		_scheduledNotifications.Add ( new Notification(typeInt,userInfo) );
-	}
+		public void ScheduleNotification ( string key, object userInfo=null ) {
+			_scheduledNotifications.Add ( new Notification(key, userInfo) );
+		}
 
-	public void SendScheduledNotifications () {
-		DoRemoveListeners();
+		public void SendScheduledNotifications () {
+			DoRemoveListeners();
 
-		foreach (Notification note in _scheduledNotifications)
-			PostNotification (note);
-		_scheduledNotifications.Clear ();
+			foreach (Notification note in _scheduledNotifications)
+				PostNotification (note);
+			_scheduledNotifications.Clear ();
+		}
+
+		public void Clear() {
+			_listeners.Clear();
+			_toRemove.Clear();
+			_scheduledNotifications.Clear();
+		}
 	}
 }
+
 
 
 // Usage:

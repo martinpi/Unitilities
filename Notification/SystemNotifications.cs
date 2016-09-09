@@ -26,19 +26,22 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class SystemNotifications : MonoBehaviour {
+namespace Unitilities {
+	public class SystemNotifications : MonoBehaviour {
 
-	bool FirstUpdate = true;
+		bool FirstUpdate = true;
 
-	/* Be sure to execute this script with the lowest execution order, e.g. -1000! */
+		/* Be sure to execute this script with the lowest execution order, e.g. -1000! */
 
-	void Update () {
-		if (!FirstUpdate) return;
-		FirstUpdate = false;
+		void Update () {
+			if (!FirstUpdate) return;
+			FirstUpdate = false;
 
-		NotificationCenter.Instance.PostNotification(NotificationType.Init);
-		NotificationCenter.Instance.PostNotification(NotificationType.PostInit);
-		NotificationCenter.Instance.PostNotification(NotificationType.PostPostInit);
-		NotificationCenter.Instance.PostNotification(NotificationType.InitDone);
+			NotificationCenter.Instance.PostNotification("Init");
+			NotificationCenter.Instance.PostNotification("PostInit");
+			NotificationCenter.Instance.PostNotification("PostPostInit");
+			NotificationCenter.Instance.PostNotification("InitDone");
+		}
 	}
 }
+

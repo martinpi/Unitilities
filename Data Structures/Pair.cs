@@ -1,4 +1,4 @@
-/*
+﻿/*
 The MIT License
 
 Copyright (c) 2015 Martin Pichlmair
@@ -22,22 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
-// Standard notification class. Derive subclass for specific needs
 namespace Unitilities {
-	public class Notification {
-	    public string key;
-	    public object userInfo;
-
-	    public Notification( string type ) {
-	        this.key = type;
-			this.userInfo = null;
-	    }
-
-
-	    public Notification( string type, object userInfo ) {
-	        this.key = type;
-	        this.userInfo = userInfo;
-	    }
+	
+	public class Pair<T1, T2> {
+		public T1 First { get; private set; }
+		public T2 Second { get; private set; }
+		internal Pair(T1 first, T2 second)
+		{
+			First = first;
+			Second = second;
+		}
 	}
+
+	public static class Pair {
+		public static Pair<T1, T2> New<T1, T2>(T1 first, T2 second) {
+			return new Pair<T1, T2>(first, second);
+		}
+	}	
+
 }
+
