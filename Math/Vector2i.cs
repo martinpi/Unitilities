@@ -179,7 +179,7 @@ public static class Vector2Extensions {
 		return n;
 	}
 
-	public static Vector3 Vector2XY (this Vector2 vector2) {
+	public static Vector3 Vector3XY (this Vector2 vector2) {
 		return new Vector3 (vector2.x, vector2.y, 0f);
 	}
 }
