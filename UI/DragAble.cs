@@ -50,7 +50,7 @@ public class DragAble : Selectable, IBeginDragHandler, IDragHandler, IEndDragHan
 	public class DragEvent : UnityEvent<Vector2> { }
 	public DragEvent onValueChanged = new DragEvent();
 
-	protected void Start() {
+	protected override void Start() {
 //		base.Start();
 		ParentRect = transform.parent.GetComponent<RectTransform>();
 		HandleRect = gameObject.GetComponent<RectTransform>();

@@ -34,7 +34,7 @@ public class Line : Graphic
 {
 	public float Width = 1f;
 
-	protected override void OnPopulateMesh(Mesh toFill)
+	protected override void OnPopulateMesh(VertexHelper vh)
 	{
 		Vector2 corner1 = Vector2.zero;
 		Vector2 corner2 = Vector2.one;
@@ -54,17 +54,13 @@ public class Line : Graphic
 		var uv = new Vector4(0f,0f,1f,1f);
 
 		var color32 = color;
-		using (var vh = new VertexHelper())
-		{
-			vh.AddVert(new Vector3(corner1.x + normal.y * Width/2f, corner1.y - normal.x * Width/2f), color32, new Vector2(uv.x, uv.y));
-			vh.AddVert(new Vector3(corner1.x - normal.y * Width/2f, corner1.y + normal.x * Width/2f), color32, new Vector2(uv.x, uv.w));
-			vh.AddVert(new Vector3(corner2.x - normal.y * Width/2f, corner2.y + normal.x * Width/2f), color32, new Vector2(uv.z, uv.w));
-			vh.AddVert(new Vector3(corner2.x + normal.y * Width/2f, corner2.y - normal.x * Width/2f), color32, new Vector2(uv.z, uv.y));
 
-			vh.AddTriangle(0, 1, 2);
-			vh.AddTriangle(2, 3, 0);
+		vh.AddVert(new Vector3(corner1.x + normal.y * Width/2f, corner1.y - normal.x * Width/2f), color32, new Vector2(uv.x, uv.y));
+		vh.AddVert(new Vector3(corner1.x - normal.y * Width/2f, corner1.y + normal.x * Width/2f), color32, new Vector2(uv.x, uv.w));
+		vh.AddVert(new Vector3(corner2.x - normal.y * Width/2f, corner2.y + normal.x * Width/2f), color32, new Vector2(uv.z, uv.w));
+		vh.AddVert(new Vector3(corner2.x + normal.y * Width/2f, corner2.y - normal.x * Width/2f), color32, new Vector2(uv.z, uv.y));
 
-			vh.FillMesh(toFill);
-		}
+		vh.AddTriangle(0, 1, 2);
+		vh.AddTriangle(2, 3, 0);
 	}
 }
