@@ -26,46 +26,49 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-using Simulation;
+namespace Unitilities.Simulation {
 
-public class NeuronNetworkHost : MonoBehaviour {
+	public class NeuronNetworkHost : MonoBehaviour {
 
-	public bool Realtime = true;
-	public int WarmUpIterations = 10;
+		public bool Realtime = true;
+		public int WarmUpIterations = 10;
 
-	private NeuronNetwork _ai;
-	public NeuronNetwork Network { get { return _ai; } }
+		private NeuronNetwork _ai;
 
-	private bool _debug = false;
+		public NeuronNetwork Network { get { return _ai; } }
 
-	public void Calculate(float scale = 1f) {
-		_ai.Calculate(scale);
-	}
+		private bool _debug = false;
 
-	void Start () {
-		_ai = new NeuronNetwork();
-
-		NeuronLoader nl = gameObject.GetComponent<NeuronLoader>();
-		if (nl != null)
-			nl.Init();
-
-		for (int i = 0; i<WarmUpIterations; i++) {
-			_ai.Calculate(1f);
-			if (_debug) DebugPrint(i);
+		public void Calculate( float scale = 1f ) {
+			_ai.Calculate(scale);
 		}
-	}
-	
-	void Update () {
-		if (Realtime) 
-			Calculate(Time.deltaTime);
-	}
 
-	public void DebugPrint(int step) {
-		string str = "Simulation step "+step+":";
+		void Start() {
+			_ai = new NeuronNetwork();
 
-		foreach (KeyValuePair<string, Neuron> n in _ai.Neurons) {
-			str += "\n "+n.Key+" = "+n.Value.Value;
+			NeuronLoader nl = gameObject.GetComponent<NeuronLoader>();
+			if (nl != null)
+				nl.Init();
+
+			for (int i = 0; i < WarmUpIterations; i++) {
+				_ai.Calculate(1f);
+				if (_debug)
+					DebugPrint(i);
+			}
 		}
-		Debug.Log(str);
+
+		void Update() {
+			if (Realtime)
+				Calculate(Time.deltaTime);
+		}
+
+		public void DebugPrint( int step ) {
+			string str = "Simulation step " + step + ":";
+
+			foreach (KeyValuePair<string, Neuron> n in _ai.Neurons) {
+				str += "\n " + n.Key + " = " + n.Value.Value;
+			}
+			Debug.Log(str);
+		}
 	}
 }

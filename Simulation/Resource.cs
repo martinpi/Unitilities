@@ -26,7 +26,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Simulation {
+namespace Unitilities.Simulation {
 
 	public class Resource {
 		private static Dictionary<string, Resource> _allResources = new Dictionary<string, Resource>();

@@ -25,7 +25,7 @@ THE SOFTWARE.
 using System.Collections.Generic;
 using Utils;
 
-namespace Simulation {
+namespace Unitilities.Simulation {
 
 	public class NeuronNetwork {
 		private Dictionary<string, Neuron> _neurons = new Dictionary<string,Neuron>();
