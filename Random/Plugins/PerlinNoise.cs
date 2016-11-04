@@ -8,7 +8,11 @@ public class PerlinNoise
 
 	public PerlinNoise(int seed)
 	{
+		#if UNITY_5_4_OR_NEWER
 		UnityEngine.Random.InitState(seed);
+		#else
+		UnityEngine.Random.seed = seed;
+		#endif
 
 		int i, j, k;
 		for (i = 0 ; i < B ; i++) 
