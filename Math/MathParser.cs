@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace Utils
+namespace Unitilities.Utils
 {
     public class MathParser
     {

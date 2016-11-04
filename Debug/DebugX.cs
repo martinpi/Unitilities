@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 using UnityEngine;
 
-namespace Utils {
+namespace Unitilities.Utils {
 
 	public static class DebugX {
 		public static void Log(bool onoff, object message ) {

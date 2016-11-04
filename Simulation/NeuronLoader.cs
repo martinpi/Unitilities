@@ -24,8 +24,8 @@ THE SOFTWARE.
 
 using UnityEngine;
 using System.Collections.Generic;
-using Simulation;
-using Utils;
+using Unitilities.File;
+using Unitilities.Utils;
 
 namespace Unitilities.Simulation {
 

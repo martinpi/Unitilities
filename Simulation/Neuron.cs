@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
-using Utils;
+using Unitilities.Utils;
 
 namespace Unitilities.Simulation {
 
@@ -37,24 +38,19 @@ namespace Unitilities.Simulation {
 
 		public NeuronNetwork() { }
 		public NeuronNetwork(double seed) { _seed = seed; }
+		//		public Neuron(string id, string formula, NeuronNetwork host = null, bool additive = true) {
 
-		public void CreateNeuron(string id, bool additive = true) {
+		public void CreateNeuron(string id, string formula="", bool additive = true) {
 			Neuron n = new Neuron(id, additive);
+			n.AddFormulas(formula);
 			n.Host = this;
 			_neurons.Add(n.ID, n);
 		}
 		public void CreateTemporaryAffector(string neuron, float duration, float scale) {
-			UnityEngine.Debug.Log ("CreateTemporaryAffector '"+neuron+"'");
-
 			_affectors.Add(new TemporaryNeuronAffector(duration, _neurons[neuron], scale));
 		}
 
-		public void Print() {
-			foreach (Neuron n in _neurons.Values) 
-				UnityEngine.Debug.Log("Neuron "+n.ID+" = "+n.Value);
-		}
-
-		public void Calculate(float scale) {
+		public void Step(float scale = 1f) {
 
 			foreach (Neuron n in _neurons.Values) 
 				n.Prepare();
@@ -106,25 +102,26 @@ namespace Unitilities.Simulation {
 		private double _value;
 		private Neuron _neuron;
 		private double _fixedValue;
+		private Random _random;
 		public NeuronInput(Neuron neuron, string sourceNeuronId, string formula) { 
 			_neuron = neuron;
 			_formula = formula; 
 			_sourceNeuronId = sourceNeuronId;
 			_parser = new MathParser();
 			_fixedValue = 0.0;
-
-			if (_sourceNeuronId != null && !_neuron.Host.Neurons.ContainsKey(_sourceNeuronId))
-				UnityEngine.Debug.Log("Key "+_sourceNeuronId+" not found for host "+_neuron.ID);
+			_random = new Random();
+//			if (_sourceNeuronId != null && !_neuron.Host.Neurons.ContainsKey(_sourceNeuronId))
+//				UnityEngine.Debug.Log("Key "+_sourceNeuronId+" not found for host "+_neuron.ID);
 		}
 		public void Calculate(float scale) { 
 			if (_sourceNeuronId != null && _neuron.Host.Neurons.ContainsKey(_sourceNeuronId))
-				_parser.Parameters[MathParser.Variables.A] = _neuron.Host.Neurons[_sourceNeuronId].Value;
+				_parser.Parameters[MathParser.Variables.X] = _neuron.Host.Neurons[_sourceNeuronId].Value;
 
 			_parser.Parameters[MathParser.Variables.F] = _fixedValue;
 			_parser.Parameters[MathParser.Variables.S] = _neuron.Host.Seed;
-			_parser.Parameters[MathParser.Variables.R] = (double)UnityEngine.Random.value;
+			_parser.Parameters[MathParser.Variables.R] = _random.NextDouble();
 			_value = _parser.Calculate(_formula) * scale;
-			_value = Math.Clamp(_value, 0.0, 1.0);
+			_value = Utils.Math.Clamp(_value, 0.0, 1.0);
 
 			// UnityEngine.Debug.Log("         "+_neuron.ID+" receives "+_value);
 
@@ -179,7 +176,7 @@ namespace Unitilities.Simulation {
 			_additive = additive;
 			_nextValue = _value = 0f;
 			AddToHost(host);
-			AddFormula(formula);
+			AddFormulas(formula);
 		}
 		public Neuron(string id, bool additive = true) {
 			_id = id;
@@ -197,7 +194,7 @@ namespace Unitilities.Simulation {
 			if (_host != null)
 				_host.Neurons.Add(_id, this);
 
-			UnityEngine.Debug.Log("Added neuron "+_id);
+//			UnityEngine.Debug.Log("Added neuron "+_id);
 		}
 		public NeuronNetwork Host { 
 			get { return _host; } 
@@ -206,7 +203,7 @@ namespace Unitilities.Simulation {
 		public string ID { get { return _id; } } 
 		public virtual double Value { get { return _value; } set { _nextValue=value; } }
 
-		public void AddFormula(string formula) {
+		public void AddFormulas(string formula) {
 			if (formula.Length == 0) return;
 
 			string[] formulae = formula.Split(';');
@@ -215,7 +212,7 @@ namespace Unitilities.Simulation {
 				//DebugX.Log(_debug, "NeuronLoader parsing "+items[i]);
 				string[] keyFormula = frm.Split(':');
 				if (keyFormula.Length != 2) {
-					DebugX.Assert(keyFormula.Length == 2, "NeuronLoader parsing error: '"+frm+"' does not conform to 'key, value'");
+//					DebugX.Assert(keyFormula.Length == 2, "NeuronLoader parsing error: '"+frm+"' does not conform to 'key, value'");
 					continue;
 				}
 
@@ -226,7 +223,7 @@ namespace Unitilities.Simulation {
 		}
 
 		public void Prepare () {
-			_nextValue = _value;
+			_nextValue = 0.0;
 		}
 
 		public void Calculate () {
@@ -236,7 +233,7 @@ namespace Unitilities.Simulation {
 				else
 					_nextValue *= i.Value;
 
-			_nextValue = Math.Clamp(_nextValue, 0.0, 1.0);
+			_nextValue = Utils.Math.Clamp(_nextValue, 0.0, 1.0);
 
 //			UnityEngine.Debug.Log("Updating "+ID+" to "+_value+" additive = "+_additive);
 

@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 using UnityEngine;
 
-namespace Utils {
+namespace Unitilities.Utils {
 
 	public class Math {
 

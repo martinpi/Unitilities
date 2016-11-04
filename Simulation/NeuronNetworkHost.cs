@@ -40,7 +40,7 @@ namespace Unitilities.Simulation {
 		private bool _debug = false;
 
 		public void Calculate( float scale = 1f ) {
-			_ai.Calculate(scale);
+			_ai.Step(scale);
 		}
 
 		void Start() {
@@ -51,7 +51,7 @@ namespace Unitilities.Simulation {
 				nl.Init();
 
 			for (int i = 0; i < WarmUpIterations; i++) {
-				_ai.Calculate(1f);
+				_ai.Step(1f);
 				if (_debug)
 					DebugPrint(i);
 			}
