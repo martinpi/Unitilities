@@ -75,6 +75,13 @@ namespace Unitilities.Simulation {
 				_affectors.Remove(t);
 		}
 
+		public override string ToString() {
+			string rs = "";
+			foreach (KeyValuePair<string, Neuron> kvp in _neurons)
+				rs += kvp.Key + " = " + (float)kvp.Value.Value + "\n";
+			return rs;
+		}
+
 		/*
 		// for testing:
 		public static NeuronNetwork Network = new NeuronNetwork();
@@ -96,6 +103,7 @@ namespace Unitilities.Simulation {
 	}
 
 	public class NeuronInput {
+		private bool _active;
 		private string _formula;
 		private string _sourceNeuronId;
 		private MathParser _parser;
@@ -110,10 +118,11 @@ namespace Unitilities.Simulation {
 			_parser = new MathParser();
 			_fixedValue = 0.0;
 			_random = new Random();
-//			if (_sourceNeuronId != null && !_neuron.Host.Neurons.ContainsKey(_sourceNeuronId))
-//				UnityEngine.Debug.Log("Key "+_sourceNeuronId+" not found for host "+_neuron.ID);
+			_active = true;
 		}
-		public void Calculate(float scale) { 
+		public void Calculate(float scale) {
+			if (!_active) return;
+
 			if (_sourceNeuronId != null && _neuron.Host.Neurons.ContainsKey(_sourceNeuronId))
 				_parser.Parameters[MathParser.Variables.X] = _neuron.Host.Neurons[_sourceNeuronId].Value;
 
@@ -122,9 +131,6 @@ namespace Unitilities.Simulation {
 			_parser.Parameters[MathParser.Variables.R] = _random.NextDouble();
 			_value = _parser.Calculate(_formula) * scale;
 			_value = Utils.Math.Clamp(_value, 0.0, 1.0);
-
-			// UnityEngine.Debug.Log("         "+_neuron.ID+" receives "+_value);
-
 		}
 		public Neuron Source {
 			get { return _sourceNeuronId == null ? null : _neuron.Host.Neurons[_sourceNeuronId]; }
@@ -138,7 +144,11 @@ namespace Unitilities.Simulation {
 		}
 		public string Formula {
 			get { return _formula; }
-			set { _formula = value; } //UnityEngine.Debug.Log ("Setting "+_neuron.ID+" source formula to " + _formula); }
+			set { _formula = value; }
+		}
+		public bool Active {
+			get { return _active; }
+			set { _active = value; }
 		}
 	}
 
