@@ -25,8 +25,6 @@ THE SOFTWARE.
 using UnityEngine;
 using System.Collections;
 
-using Simulation;
-
 namespace Unitilities.Simulation {
 
 	public class NeuronHost : MonoBehaviour {

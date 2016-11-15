@@ -23,7 +23,6 @@ THE SOFTWARE.
 */
 using UnityEngine;
 using System.Collections;
-using Simulation;
 
 namespace Unitilities.Economy {
 	public struct StoredResource {
