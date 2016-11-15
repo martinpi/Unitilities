@@ -24,8 +24,7 @@ THE SOFTWARE.
 
 
 using UnityEngine;
-using System.Collections;
-using Unitilities;
+using Unitilities.Utils;
 
 namespace Unitilities.BoneSystem {
 
@@ -42,7 +41,7 @@ namespace Unitilities.BoneSystem {
 
 		void TryCreate() {
 			if (_Prefab != null && _object == null) {
-				_object = Utils.Helpers.CreateObjectAt(_Prefab, Vector3.zero, gameObject);
+				_object = Helpers.CreateObjectAt(_Prefab, Vector3.zero, gameObject);
 			}
 		}
 
