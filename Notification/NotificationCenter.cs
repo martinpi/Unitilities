@@ -30,7 +30,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Unitilities {
+namespace Unitilities.Notifications {
 	public delegate void OnNotificationDelegate (Notification note);
 
 	public sealed class NotificationCenter {

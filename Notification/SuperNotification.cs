@@ -25,7 +25,7 @@ THE SOFTWARE.
 using UnityEngine;
 using System.Collections;
 
-namespace Unitilities {
+namespace Unitilities.Notifications {
 
 	public class SuperNotification : Notification
 	{

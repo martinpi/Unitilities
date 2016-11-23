@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 
 // Standard notification class. Derive subclass for specific needs
-namespace Unitilities {
+namespace Unitilities.Notifications {
 	public class Notification {
 	    public string key;
 	    public object userInfo;

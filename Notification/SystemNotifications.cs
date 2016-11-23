@@ -26,7 +26,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Unitilities {
+namespace Unitilities.Notifications {
 	public class SystemNotifications : MonoBehaviour {
 
 		bool FirstUpdate = true;
