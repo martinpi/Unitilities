@@ -40,11 +40,12 @@ namespace Unitilities.Simulation {
 		public NeuronNetwork(double seed) { _seed = seed; }
 		//		public Neuron(string id, string formula, NeuronNetwork host = null, bool additive = true) {
 
-		public void CreateNeuron(string id, string formula="", bool additive = true) {
+		public Neuron CreateNeuron(string id, string formula="", bool additive = true) {
 			Neuron n = new Neuron(id, additive);
 			n.AddFormulas(formula);
 			n.Host = this;
 			_neurons.Add(n.ID, n);
+			return n;
 		}
 		public void CreateTemporaryAffector(string neuron, float duration, float scale) {
 			_affectors.Add(new TemporaryNeuronAffector(duration, _neurons[neuron], scale));
@@ -130,7 +131,7 @@ namespace Unitilities.Simulation {
 			_parser.Parameters[MathParser.Variables.S] = _neuron.Host.Seed;
 			_parser.Parameters[MathParser.Variables.R] = _random.NextDouble();
 			_value = _parser.Calculate(_formula) * scale;
-			_value = Utils.Math.Clamp(_value, 0.0, 1.0);
+//			_value = Utils.Math.Clamp(_value, 0.0, 1.0);
 		}
 		public Neuron Source {
 			get { return _sourceNeuronId == null ? null : _neuron.Host.Neurons[_sourceNeuronId]; }
