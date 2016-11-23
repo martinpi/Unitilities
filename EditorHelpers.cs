@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License
 
-Copyright (c) 2015 Martin Pichlmair
+Copyright (c) 2016 Martin Pichlmair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-using UnityEngine;
+using UnityEditor;
 
-public struct Mathi {
-	public static int Min(int x, int y) { return x < y ? x : y; }
-	public static int Max(int x, int y) { return x > y ? x : y; }
-	public static int Abs(int x) { return x >= 0 ? x : -x; }
-	public static int Clamp(int value, int min, int max) { return Max(Min(value,max), min); }
-	public static int Lerp(int from, int to, float t) { return Mathf.FloorToInt((float)(to-from)*Mathf.Clamp01(t)+(float)from); }
-	public static int RandomBetween(int from, int to) { return (int)from + (int)Mathf.Floor((float)(to-from+1) * Random.value); }
+namespace Unitilities {
+	public static class EditorHelpers {
+		#if UNITY_EDITOR
+		public static void SetScriptExecutionPriority( string script, int priority ) {
+			foreach (MonoScript monoScript in MonoImporter.GetAllRuntimeMonoScripts()) {
+				if (monoScript.name == script) {
+					if (MonoImporter.GetExecutionOrder(monoScript) != priority) {
+						MonoImporter.SetExecutionOrder(monoScript, priority);
+					}
+					break;
+				}
+			}
+		}
+		#endif
+	}
 }
-

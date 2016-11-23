@@ -61,6 +61,7 @@ namespace Unitilities.Utils {
 		public static void ReloadScene() {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		}
+
 	}
 
 }
