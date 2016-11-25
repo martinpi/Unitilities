@@ -23,10 +23,9 @@ THE SOFTWARE.
 */
 
 using UnityEngine;
-using System.Collections;
+using Unitilities.Collections.Generic;
 
-namespace Pathfinding
-{
+namespace Unitilities.Pathfinding {
 	public class EPathNode : IPathNode<Object> {
 		public int X { get; set; }
 		public int Y { get; set; }

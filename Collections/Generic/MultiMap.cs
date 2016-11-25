@@ -22,23 +22,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-namespace Unitilities {
-	
-	public class Pair<T1, T2> {
-		public T1 First { get; private set; }
-		public T2 Second { get; private set; }
-		internal Pair(T1 first, T2 second)
-		{
-			First = first;
-			Second = second;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace Unitilities.Collections.Generic {
+	public class MultiMap<V> {
+		Dictionary<float, List<V>> _dictionary = new Dictionary<float, List<V>>();
+
+		public void Add( float key, V value ) {
+			List<V> list;
+			if (this._dictionary.TryGetValue(key, out list)) {
+				list.Add(value);
+			} else {
+				list = new List<V>();
+				list.Add(value);
+				this._dictionary[key] = list;
+			}
+		}
+
+		public void Remove( float key ) {
+			this._dictionary.Remove(key);
+		}
+
+		public IEnumerable<float> Keys {
+			get {
+				return this._dictionary.Keys;
+			}
+		}
+
+		public List<V> this [float key] {
+			get {
+				List<V> list;
+				if (!this._dictionary.TryGetValue(key, out list)) {
+					list = new List<V>();
+					this._dictionary[key] = list;
+				}
+				return list;
+			}
 		}
 	}
-
-	public static class Pair {
-		public static Pair<T1, T2> New<T1, T2>(T1 first, T2 second) {
-			return new Pair<T1, T2>(first, second);
-		}
-	}	
-
 }
-

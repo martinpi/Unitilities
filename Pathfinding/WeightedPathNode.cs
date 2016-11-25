@@ -25,7 +25,7 @@ THE SOFTWARE.
 using UnityEngine;
 using System.Collections;
 
-namespace Pathfinding
+namespace Unitilities.Pathfinding
 {
 	public class WPathNode : IPathNode<float[,]> {
 		public int X { get; set; }
