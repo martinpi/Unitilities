@@ -64,15 +64,15 @@ namespace Unitilities.Simulation {
 
 				for (int i = 7; i < items.Length; ++i) {
 					DebugX.Log(_debug, "NeuronLoader parsing " + items[i]);
-					string[] keyFormula = items[i].Split(':');
-					if (keyFormula.Length != 2) {
-						DebugX.Assert(keyFormula.Length == 2, "NeuronLoader parsing error in line " + nr + ": '" + items[i] + "' does not conform to 'key, value'");
-						continue;
-					}
-
-					DebugX.Log(_debug, "NeuronLoader inputs to neuron " + neu.ID + " <- " + keyFormula[0].Trim() + ", " + keyFormula[1].Trim());
-
-					neu.Inputs.Add(new NeuronInput(neu, keyFormula[0].Trim(), keyFormula[1].Trim()));
+//					string[] keyFormula = items[i].Split(':');
+//					if (keyFormula.Length != 2) {
+//						DebugX.Assert(keyFormula.Length == 2, "NeuronLoader parsing error in line " + nr + ": '" + items[i] + "' does not conform to 'key, value'");
+//						continue;
+//					}
+//
+//					DebugX.Log(_debug, "NeuronLoader inputs to neuron " + neu.ID + " <- " + keyFormula[0].Trim() + ", " + keyFormula[1].Trim());
+//
+					neu.Inputs.Add(new Link( items[i], _network ));
 				}
 
 				nr++;

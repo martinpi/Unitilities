@@ -63,7 +63,7 @@ namespace Unitilities.Simulation {
 			}
 
 			foreach (Neuron n in _neurons.Values) 
-				foreach (NeuronInput i in n.Inputs) 
+				foreach (Link i in n.Inputs) 
 					i.Calculate(scale);
 
 			foreach (Neuron n in _neurons.Values) 
@@ -103,38 +103,77 @@ namespace Unitilities.Simulation {
 		*/
 	}
 
-	public class NeuronInput {
+	public class Link {
 		private bool _active;
+		private bool _parsed;
 		private string _formula;
-		private string _sourceNeuronId;
+		private string _targetId;
 		private MathParser _parser;
 		private double _value;
-		private Neuron _neuron;
+		private Neuron _source;
+		private Neuron _target;
 		private double _fixedValue;
 		private Random _random;
-		public NeuronInput(Neuron neuron, string sourceNeuronId, string formula) { 
-			_neuron = neuron;
+		NeuronNetwork _nw;
+		public Link(string formula, NeuronNetwork host) {
+
 			_formula = formula; 
-			_sourceNeuronId = sourceNeuronId;
 			_parser = new MathParser();
 			_fixedValue = 0.0;
 			_random = new Random();
 			_active = true;
+			_nw = host;
+			_formula = formula;
+			_parsed = false;
 		}
+
+		public bool ParseFormula() {
+			string[] keyFormula = _formula.Split(':');
+			if (keyFormula.Length == 2) {
+				if (_nw.Neurons.ContainsKey(keyFormula[0].Trim()))
+					_target = _nw.Neurons[keyFormula[0].Trim()];
+
+				string[] arr = keyFormula[1].Split("^/+-*()".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+				foreach(string s in arr) {
+					// we only support one source neuron for now
+					if (_nw.Neurons.ContainsKey(s.Trim())) {
+						_formula = keyFormula[1].Replace(s, "X").Trim();
+						_source = _nw.Neurons[s.Trim()];
+
+//						UnityEngine.Debug.Log("+Neuron Target "+ _target.ID +" Source "+ s +" Formula '"+_formula+"'");
+						return true;
+					}
+				}
+
+//				UnityEngine.Debug.Log("+Neuron Target "+ _target.ID +" has source-less formula '"+_formula+"'");
+
+				_formula = keyFormula[1].Trim();
+				return true;
+			}
+
+//			UnityEngine.Debug.Log("+Neuron formula error "+_formula);
+
+			return false;
+		}
+
 		public void Calculate(float scale) {
 			if (!_active) return;
 
-			if (_sourceNeuronId != null && _neuron.Host.Neurons.ContainsKey(_sourceNeuronId))
-				_parser.Parameters[MathParser.Variables.X] = _neuron.Host.Neurons[_sourceNeuronId].Value;
+			if (!_parsed) {
+				_parsed = ParseFormula();
+			}
+
+			if (_source != null)
+				_parser.Parameters[MathParser.Variables.X] = _source.Value;
 
 			_parser.Parameters[MathParser.Variables.F] = _fixedValue;
-			_parser.Parameters[MathParser.Variables.S] = _neuron.Host.Seed;
+			_parser.Parameters[MathParser.Variables.S] = _nw.Seed;
 			_parser.Parameters[MathParser.Variables.R] = _random.NextDouble();
 			_value = _parser.Calculate(_formula) * scale;
 //			_value = Utils.Math.Clamp(_value, 0.0, 1.0);
 		}
 		public Neuron Source {
-			get { return _sourceNeuronId == null ? null : _neuron.Host.Neurons[_sourceNeuronId]; }
+			get { return _source; } 
 		}
 		public double Value {
 			get { return _value; }
@@ -176,16 +215,18 @@ namespace Unitilities.Simulation {
 
 
 	public class Neuron {
-		private List<NeuronInput> _neuronInputs  = new List<NeuronInput>();
+		private List<Link> _neuronInputs  = new List<Link>();
 		protected double _value;
 		protected double _nextValue;
 		private string _id;
 		private NeuronNetwork _host = null;
 		private bool _additive;
+		private bool _active;
 		public Neuron(string id, string formula, NeuronNetwork host = null, bool additive = true) {
 			_id = id;
 			_additive = additive;
 			_nextValue = _value = 0f;
+			_active = true;
 			AddToHost(host);
 			AddFormulas(formula);
 		}
@@ -193,8 +234,9 @@ namespace Unitilities.Simulation {
 			_id = id;
 			_additive = additive;
 			_host = null;
+			_active = true;
 		}
-		public List<NeuronInput> Inputs {
+		public List<Link> Inputs {
 			get { return _neuronInputs; }
 		}
 
@@ -220,16 +262,7 @@ namespace Unitilities.Simulation {
 			string[] formulae = formula.Split(';');
 
 			foreach (string frm in formulae) {
-				//DebugX.Log(_debug, "NeuronLoader parsing "+items[i]);
-				string[] keyFormula = frm.Split(':');
-				if (keyFormula.Length != 2) {
-//					DebugX.Assert(keyFormula.Length == 2, "NeuronLoader parsing error: '"+frm+"' does not conform to 'key, value'");
-					continue;
-				}
-
-				// DebugX.Log(true, "NeuronLoader inputs to neuron "+ID+" <- "+keyFormula[0].Trim() +", "+ keyFormula[1].Trim());
-
-				Inputs.Add( new NeuronInput(this, keyFormula[0].Trim(), keyFormula[1].Trim()) );
+				Inputs.Add( new Link( frm, _host ));
 			}
 		}
 
@@ -238,7 +271,9 @@ namespace Unitilities.Simulation {
 		}
 
 		public void Calculate () {
-			foreach (NeuronInput i in _neuronInputs)
+			if (!_active) return;
+
+			foreach (Link i in _neuronInputs)
 				if (_additive) 
 					_nextValue += i.Value;
 				else
@@ -254,7 +289,10 @@ namespace Unitilities.Simulation {
 			_value = _nextValue;
 		}
 
-
+		public bool Active {
+			get { return _active; }
+			set { _active = value; }
+		}
 	}
 }
 
