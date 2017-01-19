@@ -22,12 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace Unitilities {
 	public static class EditorHelpers {
-		#if UNITY_EDITOR
 		public static void SetScriptExecutionPriority( string script, int priority ) {
+			#if UNITY_EDITOR
 			foreach (MonoScript monoScript in MonoImporter.GetAllRuntimeMonoScripts()) {
 				if (monoScript.name == script) {
 					if (MonoImporter.GetExecutionOrder(monoScript) != priority) {
@@ -36,7 +38,8 @@ namespace Unitilities {
 					break;
 				}
 			}
+			#endif
 		}
-		#endif
 	}
 }
+

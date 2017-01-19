@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Unitilities {
+namespace Unitilities.R {
 	public class MarkovChain {
 
 		public static float[,] GetChain(int dim) {
@@ -9,7 +9,7 @@ namespace Unitilities {
 			for (int x=0; x<dim; ++x) {
 				float row_sum = 0f;
 				for (int y=0; y<dim; ++y) {
-					float row_val = Random.value;
+					float row_val = UnityEngine.Random.value;
 					chain[x,y] = row_val;
 					row_sum += row_val;
 				}
@@ -21,7 +21,7 @@ namespace Unitilities {
 		}
 
 		public static int Next(float[,] chain, int column) {
-			float val = Random.value;
+			float val = UnityEngine.Random.value;
 			float running_sum = chain[column, 0];
 			int i=0;
 

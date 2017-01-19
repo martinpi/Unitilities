@@ -60,13 +60,13 @@ namespace Unitilities.Economy {
 				Producer producer = ob.GetComponent<Producer>();
 				if (producer != null) {
 					_producers.Add(producer);
-					producer.InitProduction(Random.value);
+					producer.InitProduction(UnityEngine.Random.value);
 				}
 
 				Consumer consumer = ob.GetComponent<Consumer>();
 				if (consumer != null) {
 					_consumers.Add(consumer);
-					consumer.InitDemand(Random.value);
+					consumer.InitDemand(UnityEngine.Random.value);
 				}
 
 				Stock stock = ob.GetComponent<Stock>();
@@ -91,7 +91,7 @@ namespace Unitilities.Economy {
 		}
 
 		public Resource GetRandomResource() {
-			return Resource.All[_resourceNames[(int)(Random.value * _resourceNames.Count)]];
+			return Resource.All[_resourceNames[(int)(UnityEngine.Random.value * _resourceNames.Count)]];
 		}
 
 		void TickEconomy() {

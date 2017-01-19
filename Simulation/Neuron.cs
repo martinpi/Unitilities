@@ -113,14 +113,14 @@ namespace Unitilities.Simulation {
 		private Neuron _source;
 		private Neuron _target;
 		private double _fixedValue;
-		private Random _random;
+		private System.Random _random;
 		NeuronNetwork _nw;
 		public Link(string formula, NeuronNetwork host) {
 
 			_formula = formula; 
 			_parser = new MathParser();
 			_fixedValue = 0.0;
-			_random = new Random();
+			_random = new System.Random();
 			_active = true;
 			_nw = host;
 			_formula = formula;
@@ -189,6 +189,9 @@ namespace Unitilities.Simulation {
 		public bool Active {
 			get { return _active; }
 			set { _active = value; }
+		}
+		public Neuron Target {
+			get { return _target; }
 		}
 	}
 

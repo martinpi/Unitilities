@@ -43,16 +43,16 @@ namespace Unitilities.Economy {
 			_capability = capability;
 
 			foreach (Resource desc in Resource.All.Values) {
-				if (Random.value * (1 - capability) <= desc.Probability) {
+				if (UnityEngine.Random.value * (1 - capability) <= desc.Probability) {
 					Production prod;
 					prod.Description = desc;
-					prod.Produced = capability * desc.Probability * Random.value;
+					prod.Produced = capability * desc.Probability * UnityEngine.Random.value;
 					_producedGoodTypes.Add(prod);
 				}
 			}
 
 			while (_producedGoodTypes.Count > _maxGoods)
-				_producedGoodTypes.RemoveAt((int)(Random.value) * _producedGoodTypes.Count);
+				_producedGoodTypes.RemoveAt((int)(UnityEngine.Random.value) * _producedGoodTypes.Count);
 		}
 
 		void Produce() {
@@ -62,7 +62,7 @@ namespace Unitilities.Economy {
 				StoredResource good;
 				good.Description = desc;
 				good.Amount = prod.Produced;
-				good.Price = (int)(1f / desc.Probability * Random.value / _capability);
+				good.Price = (int)(1f / desc.Probability * UnityEngine.Random.value / _capability);
 				good.PriceSale = (int)((float)good.Price * 1.2f);
 
 //			Debug.Log("Produced +"+good.Amount+" "+good.Description.Name);

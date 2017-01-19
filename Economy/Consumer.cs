@@ -43,13 +43,13 @@ namespace Unitilities.Economy {
 			_stock = GetComponent<Stock>();
 			_demand = new Dictionary<string,Demand>();
 			_scale = scale;
-			_numDemandedGoods = Mathi.Clamp((int)(Random.value * scale), 2, _maxGoods);
+			_numDemandedGoods = Mathi.Clamp((int)(UnityEngine.Random.value * scale), 2, _maxGoods);
 
 			for (int i = 0; i < _numDemandedGoods; ++i) {
 				Resource desc = _economyManager.GetRandomResource();
 				Demand demand;
 				demand.Description = desc;
-				demand.Consumed = (_scale * Random.value * desc.Probability);
+				demand.Consumed = (_scale * UnityEngine.Random.value * desc.Probability);
 
 				if (!_demand.ContainsKey(demand.Description.ID))
 					_demand.Add(demand.Description.ID, demand);
