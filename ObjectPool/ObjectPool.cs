@@ -129,7 +129,9 @@ public class ObjectPool : MonoBehaviour
 					return pooledObject;
 					
 				} else if(!onlyPooled) {
-					return Instantiate(objectPrefabs[i]) as GameObject;
+					GameObject pooledObject = Instantiate(objectPrefabs[i]) as GameObject;
+					pooledObject.name = prefab.name;
+					return pooledObject;
 				}
 				
 				break;
