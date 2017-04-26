@@ -10,7 +10,9 @@ public class BoidManager : MonoBehaviour {
 	private List<Transform> _hostiles;
 
 	private Swarm _swarm;
-	[SerializeField] int numberOfDots = 20;
+	[SerializeField] int numberOfBoids = 20;
+
+	[SerializeField] float activateAfter = 60f;
 
 	[SerializeField] float speed = 0.5f;
 	[SerializeField] float sight = 200f;
@@ -25,26 +27,27 @@ public class BoidManager : MonoBehaviour {
 
 	[SerializeField] Transform target;
 	private GameManager _manager;
+	private bool _isActive;
 
 	void Start () {
 		_manager = FindObjectOfType<GameManager>();
 		StartCoroutine(InitSwarms());
+		StartCoroutine(ActivateSwarm());
 	}
 
 	IEnumerator InitSwarms() {
 		Vector2 pos = transform.position.Vector2XZ();
 		Rect areaRect = new Rect(pos-area/2f, area);
-		_swarm = new Swarm(0.25f, areaRect, numberOfDots, type);
+		_swarm = new Swarm(0.25f, areaRect, numberOfBoids, type);
 
 		ObjectPool.instance.Init();
 
 		_hostiles = new List<Transform>();
-		for (var i = 0; i < numberOfDots; i++) 
-			_hostiles.Add(ObjectPool.instance.GetObjectForType(Prefab.name, false).transform);
-
-		UpdateSwarmParameters();
-		for (var i = 0; i < numberOfDots; i++) 
-			_swarm.Boids[i].Reset();
+		for (var i = 0; i < numberOfBoids; i++) {
+			GameObject o = ObjectPool.instance.GetObjectForType(Prefab.name, false);
+			o.SetActive(false);
+			_hostiles.Add(o.transform);
+		}
 
 		yield return null;
 	}
@@ -52,6 +55,20 @@ public class BoidManager : MonoBehaviour {
 	IEnumerator PutbackAfter(GameObject g, float t) {
 		yield return new WaitForSeconds(t);
 		ObjectPool.instance.PoolObject(g);
+	}
+
+	IEnumerator ActivateSwarm() {
+		yield return new WaitForSeconds(activateAfter);
+
+		_isActive = true;
+
+		_swarm.RegisterSwarm();
+		for (var i = 0; i < numberOfBoids; i++) {
+			_hostiles[i].gameObject.SetActive(true);
+		}
+		UpdateSwarmParameters();
+		for (var i = 0; i < numberOfBoids; i++) 
+			_swarm.Boids[i].Reset();
 	}
 
 	void UpdateSwarmParameters() {
@@ -71,12 +88,14 @@ public class BoidManager : MonoBehaviour {
 	}
 
 	void Update () {
+		if (!_isActive) return;
+
 		UpdateSwarmParameters();
 
 		Vector2 targetPos2D = target.position.Vector2XZ();
 //		_swarm.MoveBoids(targetPos2D, Time.deltaTime);
 
-		for (var i = 0; i < numberOfDots; i++) {
+		for (var i = 0; i < numberOfBoids; i++) {
 			Vector3 pos = _hostiles[i].position;
 			pos.x = _swarm.Boids[i].pos.x;
 			pos.z = _swarm.Boids[i].pos.y;
@@ -87,6 +106,7 @@ public class BoidManager : MonoBehaviour {
 			if (targetDist < _swarm.collisionSize) _manager.GameOver();
 
 			if (_swarm.Boids[i].exploded) {
+				_swarm.Boids[i].Respawn();
 
 				GameObject g = ObjectPool.instance.GetObjectForType("Explosion", true);
 

@@ -33,19 +33,17 @@ namespace Unitilities.Boids
 			}
         }
 
-//        public void MoveBoids(Vector2 target, float deltaTime)
-//        {
-//			foreach (var boid in Boids) {
-//				boid.Respawn();
-//				boid.Move(Boids,target,deltaTime);
-//			}
-//        }
+		public void RegisterSwarm() {
+			for (var i = 0; i < Boids.Count; i++) {
+				AllBoids.Add(Boids[i]);
+			}
+		}
 
 		public static void MoveAllBoids(Vector2 target, float deltaTime, float cameraSize)
 		{
 			foreach (var boid in AllBoids) {
-				boid.Respawn();
 				boid.Move(AllBoids,target,deltaTime,cameraSize);
+//				boid.Respawn();
 			}
 		}
 
