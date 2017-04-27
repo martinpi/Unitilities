@@ -85,6 +85,7 @@ public class BoidManager : MonoBehaviour {
 		_swarm.cameraArea = new Rect(bl, tr-bl);
 
 		_manager.RegisterKilled(_swarm.killed);
+		_swarm.killed = 0;
 	}
 
 	void Update () {
@@ -106,8 +107,6 @@ public class BoidManager : MonoBehaviour {
 			if (targetDist < _swarm.collisionSize) _manager.GameOver();
 
 			if (_swarm.Boids[i].exploded) {
-				_swarm.Boids[i].Respawn();
-
 				GameObject g = ObjectPool.instance.GetObjectForType("Explosion", true);
 
 				if (g != null) {
@@ -117,6 +116,11 @@ public class BoidManager : MonoBehaviour {
 					StartCoroutine(PutbackAfter(g, 5f));
 				}
 			}
+
+			if (_swarm.Boids[i].dead) {
+				_swarm.Boids[i].Reset();
+			}
+
 		}
 	}
 }

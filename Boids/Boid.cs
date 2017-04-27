@@ -17,6 +17,7 @@ namespace Unitilities.Boids
 		public Vector2 faceDirection = Vector2.right;
 		public float rand = 1f;
 		public bool exploded = false;
+		public bool dead = false;
 		private Swarm _swarm;
 		public int type = 0;
 
@@ -27,11 +28,12 @@ namespace Unitilities.Boids
 			rand = ((float)rnd.Next(500))/1000f + 0.5f;
 			hunter = isHunter;
 			direction = new Vector2(0f,0f);
-			exploded = false;
 			this.type = type;
         }
 
 		public void Reset() {
+			exploded = false;
+			dead = false;
 			do {
 				pos.x = _swarm.swarmArea.min.x + (float)rnd.Next((int)_swarm.swarmArea.size.x);
 				pos.y = _swarm.swarmArea.min.y + (float)rnd.Next((int)_swarm.swarmArea.size.y);
@@ -59,26 +61,19 @@ namespace Unitilities.Boids
 			if (direction != Vector2.zero) faceDirection = direction;
         }
 
-		public void Respawn() {
-			if (exploded) {
-				// Reset on collision
-				Reset();
-				exploded = false;
-			}
-		}
-
 		private Vector2 FlockDirection(List<Boid> boids)
         {
 			Vector2 flockDirection = Vector2.zero;
             foreach (var boid in boids)
             {
-				if (boid != this && boid.type == type)
+				if (boid != this && boid.type == type && !boid.exploded)
                 {
 					var distance = Vector2.Distance(pos, boid.pos);
 
 					if (distance < _swarm.collisionSize) {
 						exploded = true;
-						boid.exploded = true;
+						dead = true;
+						boid.dead = true;
 						_swarm.killed += 2;
 					}
 
