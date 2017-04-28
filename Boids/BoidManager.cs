@@ -29,8 +29,11 @@ public class BoidManager : MonoBehaviour {
 	private GameManager _manager;
 	private bool _isActive;
 
+	private Dictionary<Boid, Transform> _fireDict;
+
 	void Start () {
 		_manager = FindObjectOfType<GameManager>();
+		_fireDict = new Dictionary<Boid, Transform>();
 		StartCoroutine(InitSwarms());
 		StartCoroutine(ActivateSwarm());
 	}
@@ -54,21 +57,26 @@ public class BoidManager : MonoBehaviour {
 
 	IEnumerator PutbackAfter(GameObject g, float t) {
 		yield return new WaitForSeconds(t);
+
 		ObjectPool.instance.PoolObject(g);
 	}
 
+	IEnumerator PutbackFireAfter(GameObject g, Boid b, float t) {
+		yield return new WaitForSeconds(t);
+		_fireDict.Remove(b);
+		ObjectPool.instance.PoolObject(g);
+	}
 	IEnumerator ActivateSwarm() {
 		yield return new WaitForSeconds(activateAfter);
 
-		_isActive = true;
-
+		UpdateSwarmParameters();
 		_swarm.RegisterSwarm();
 		for (var i = 0; i < numberOfBoids; i++) {
 			_hostiles[i].gameObject.SetActive(true);
-		}
-		UpdateSwarmParameters();
-		for (var i = 0; i < numberOfBoids; i++) 
 			_swarm.Boids[i].Reset();
+		}
+		UpdateKills();
+		_isActive = true;
 	}
 
 	void UpdateSwarmParameters() {
@@ -84,6 +92,9 @@ public class BoidManager : MonoBehaviour {
 		Vector2 tr = c.ViewportToWorldPoint(new Vector3(1f,1f, c.transform.position.y)).Vector2XZ();
 		_swarm.cameraArea = new Rect(bl, tr-bl);
 
+	}
+
+	void UpdateKills() {
 		_manager.RegisterKilled(_swarm.killed);
 		_swarm.killed = 0;
 	}
@@ -106,6 +117,24 @@ public class BoidManager : MonoBehaviour {
 			float targetDist = Vector2.Distance(targetPos2D, _swarm.Boids[i].pos);
 			if (targetDist < _swarm.collisionSize) _manager.GameOver();
 
+			if (_swarm.Boids[i].dead) {
+
+				if (!_fireDict.ContainsKey(_swarm.Boids[i])) {
+					GameObject g = ObjectPool.instance.GetObjectForType("Fire", true);
+
+					if (g != null) {
+						g.transform.position = pos;
+						g.transform.rotation = transform.rotation;
+
+						_fireDict.Add(_swarm.Boids[i], g.transform);
+
+						StartCoroutine(PutbackFireAfter(g, _swarm.Boids[i], 2f));
+					}
+				} else {
+					_fireDict[_swarm.Boids[i]].position = pos;
+				}
+			}
+
 			if (_swarm.Boids[i].exploded) {
 				GameObject g = ObjectPool.instance.GetObjectForType("Explosion", true);
 
@@ -117,10 +146,12 @@ public class BoidManager : MonoBehaviour {
 				}
 			}
 
-			if (_swarm.Boids[i].dead) {
+			if (_swarm.Boids[i].exploded) {
 				_swarm.Boids[i].Reset();
 			}
 
 		}
+
+		UpdateKills();
 	}
 }

@@ -18,6 +18,7 @@ namespace Unitilities.Boids
 		public float rand = 1f;
 		public bool exploded = false;
 		public bool dead = false;
+		public float deadTimer = 0f;
 		private Swarm _swarm;
 		public int type = 0;
 
@@ -34,6 +35,7 @@ namespace Unitilities.Boids
 		public void Reset() {
 			exploded = false;
 			dead = false;
+			deadTimer = 0f;
 			do {
 				pos.x = _swarm.swarmArea.min.x + (float)rnd.Next((int)_swarm.swarmArea.size.x);
 				pos.y = _swarm.swarmArea.min.y + (float)rnd.Next((int)_swarm.swarmArea.size.y);
@@ -52,7 +54,21 @@ namespace Unitilities.Boids
 			if (hunter)
 				huntPercentage = 0.8f;
 
-			Vector2 newDirection = (1f-huntPercentage) * FlockDirection(boids).normalized + huntPercentage * HuntDirection(target).normalized;
+			Vector2 flockDirection = direction;
+
+			if (dead) {
+				deadTimer -= deltaTime;
+
+				if (deadTimer < 0f)
+					exploded = true;
+				
+			} else {
+				
+				flockDirection = FlockDirection(boids).normalized;
+
+			}
+
+			Vector2 newDirection = (1f-huntPercentage) * flockDirection + huntPercentage * HuntDirection(target).normalized;
 
 			direction = (1f-_swarm.agility) * direction + _swarm.agility * newDirection;
 
@@ -66,14 +82,15 @@ namespace Unitilities.Boids
 			Vector2 flockDirection = Vector2.zero;
             foreach (var boid in boids)
             {
-				if (boid != this && boid.type == type && !boid.exploded)
+				if (boid != this && boid.type == type && !boid.exploded && !exploded)
                 {
 					var distance = Vector2.Distance(pos, boid.pos);
 
 					if (distance < _swarm.collisionSize) {
-						exploded = true;
 						dead = true;
+						deadTimer = 2f;
 						boid.dead = true;
+						boid.deadTimer = 2f;
 						_swarm.killed += 2;
 					}
 
