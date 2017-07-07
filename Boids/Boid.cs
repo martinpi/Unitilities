@@ -18,9 +18,11 @@ namespace Unitilities.Boids
 		public float rand = 1f;
 		public bool exploded = false;
 		public bool dead = false;
+		public bool wasReset = false;
 		public float deadTimer = 0f;
 		private Swarm _swarm;
 		public int type = 0;
+		public Vector2i sector = Vector2i.zero;
 
 		public Boid(Swarm swarm, bool isHunter, Rect area, int type)
         {
@@ -32,10 +34,15 @@ namespace Unitilities.Boids
 			this.type = type;
         }
 
+//		public Vector2 WrappedPosition() {
+//			
+//		}
+
 		public void Reset() {
 			exploded = false;
 			dead = false;
 			deadTimer = 0f;
+			wasReset = true;
 			do {
 				pos.x = _swarm.swarmArea.min.x + (float)rnd.Next((int)_swarm.swarmArea.size.x);
 				pos.y = _swarm.swarmArea.min.y + (float)rnd.Next((int)_swarm.swarmArea.size.y);
@@ -59,8 +66,16 @@ namespace Unitilities.Boids
 			if (dead) {
 				deadTimer -= deltaTime;
 
-				if (deadTimer < 0f)
+				if (deadTimer < 0f) {
 					exploded = true;
+
+					// explode surrounding
+
+					for (int i=0; i<boids.Count; ++i) {
+						
+					}
+						
+				}
 				
 			} else {
 				

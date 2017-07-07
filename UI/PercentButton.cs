@@ -38,7 +38,7 @@ public class PercentButton : MonoBehaviour {
 						   set { SetPercent(value); } }
 
 	void Start () {
-		_label = transform.FindChild("Percent").GetComponent<Text>();
+		_label = transform.Find("Percent").GetComponent<Text>();
 		_image = gameObject.GetComponent<Image>();
 
 		CheckInteractive();
