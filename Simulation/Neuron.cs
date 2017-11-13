@@ -22,10 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
-using Utils;
+using Unitilities.Utils;
 
-namespace Simulation {
+namespace Unitilities.Simulation {
 
 	public class NeuronNetwork {
 		private Dictionary<string, Neuron> _neurons = new Dictionary<string,Neuron>();
@@ -37,24 +38,20 @@ namespace Simulation {
 
 		public NeuronNetwork() { }
 		public NeuronNetwork(double seed) { _seed = seed; }
+		//		public Neuron(string id, string formula, NeuronNetwork host = null, bool additive = true) {
 
-		public void CreateNeuron(string id, bool additive = true) {
+		public Neuron CreateNeuron(string id, string formula="", bool additive = true) {
 			Neuron n = new Neuron(id, additive);
+			n.AddFormulas(formula);
 			n.Host = this;
 			_neurons.Add(n.ID, n);
+			return n;
 		}
 		public void CreateTemporaryAffector(string neuron, float duration, float scale) {
-			UnityEngine.Debug.Log ("CreateTemporaryAffector '"+neuron+"'");
-
 			_affectors.Add(new TemporaryNeuronAffector(duration, _neurons[neuron], scale));
 		}
 
-		public void Print() {
-			foreach (Neuron n in _neurons.Values) 
-				UnityEngine.Debug.Log("Neuron "+n.ID+" = "+n.Value);
-		}
-
-		public void Calculate(float scale) {
+		public void Step(float scale = 1f) {
 
 			foreach (Neuron n in _neurons.Values) 
 				n.Prepare();
@@ -66,7 +63,7 @@ namespace Simulation {
 			}
 
 			foreach (Neuron n in _neurons.Values) 
-				foreach (NeuronInput i in n.Inputs) 
+				foreach (Link i in n.Inputs) 
 					i.Calculate(scale);
 
 			foreach (Neuron n in _neurons.Values) 
@@ -77,6 +74,13 @@ namespace Simulation {
 
 			foreach (TemporaryNeuronAffector t in doneAffectors)
 				_affectors.Remove(t);
+		}
+
+		public override string ToString() {
+			string rs = "";
+			foreach (KeyValuePair<string, Neuron> kvp in _neurons)
+				rs += kvp.Key + " = " + (float)kvp.Value.Value + "\n";
+			return rs;
 		}
 
 		/*
@@ -99,38 +103,77 @@ namespace Simulation {
 		*/
 	}
 
-	public class NeuronInput {
+	public class Link {
+		private bool _active;
+		private bool _parsed;
 		private string _formula;
-		private string _sourceNeuronId;
+		private string _targetId;
 		private MathParser _parser;
 		private double _value;
-		private Neuron _neuron;
+		private Neuron _source;
+		private Neuron _target;
 		private double _fixedValue;
-		public NeuronInput(Neuron neuron, string sourceNeuronId, string formula) { 
-			_neuron = neuron;
+		private System.Random _random;
+		NeuronNetwork _nw;
+		public Link(string formula, NeuronNetwork host) {
+
 			_formula = formula; 
-			_sourceNeuronId = sourceNeuronId;
 			_parser = new MathParser();
 			_fixedValue = 0.0;
-
-			if (_sourceNeuronId != null && !_neuron.Host.Neurons.ContainsKey(_sourceNeuronId))
-				UnityEngine.Debug.Log("Key "+_sourceNeuronId+" not found for host "+_neuron.ID);
+			_random = new System.Random();
+			_active = true;
+			_nw = host;
+			_formula = formula;
+			_parsed = false;
 		}
-		public void Calculate(float scale) { 
-			if (_sourceNeuronId != null && _neuron.Host.Neurons.ContainsKey(_sourceNeuronId))
-				_parser.Parameters[MathParser.Variables.A] = _neuron.Host.Neurons[_sourceNeuronId].Value;
+
+		public bool ParseFormula() {
+			string[] keyFormula = _formula.Split(':');
+			if (keyFormula.Length == 2) {
+				if (_nw.Neurons.ContainsKey(keyFormula[0].Trim()))
+					_target = _nw.Neurons[keyFormula[0].Trim()];
+
+				string[] arr = keyFormula[1].Split("^/+-*()".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+				foreach(string s in arr) {
+					// we only support one source neuron for now
+					if (_nw.Neurons.ContainsKey(s.Trim())) {
+						_formula = keyFormula[1].Replace(s, "X").Trim();
+						_source = _nw.Neurons[s.Trim()];
+
+//						UnityEngine.Debug.Log("+Neuron Target "+ _target.ID +" Source "+ s +" Formula '"+_formula+"'");
+						return true;
+					}
+				}
+
+//				UnityEngine.Debug.Log("+Neuron Target "+ _target.ID +" has source-less formula '"+_formula+"'");
+
+				_formula = keyFormula[1].Trim();
+				return true;
+			}
+
+//			UnityEngine.Debug.Log("+Neuron formula error "+_formula);
+
+			return false;
+		}
+
+		public void Calculate(float scale) {
+			if (!_active) return;
+
+			if (!_parsed) {
+				_parsed = ParseFormula();
+			}
+
+			if (_source != null)
+				_parser.Parameters[MathParser.Variables.X] = _source.Value;
 
 			_parser.Parameters[MathParser.Variables.F] = _fixedValue;
-			_parser.Parameters[MathParser.Variables.S] = _neuron.Host.Seed;
-			_parser.Parameters[MathParser.Variables.R] = (double)UnityEngine.Random.value;
+			_parser.Parameters[MathParser.Variables.S] = _nw.Seed;
+			_parser.Parameters[MathParser.Variables.R] = _random.NextDouble();
 			_value = _parser.Calculate(_formula) * scale;
-			_value = Math.Clamp(_value, 0.0, 1.0);
-
-			// UnityEngine.Debug.Log("         "+_neuron.ID+" receives "+_value);
-
+//			_value = Utils.Math.Clamp(_value, 0.0, 1.0);
 		}
 		public Neuron Source {
-			get { return _sourceNeuronId == null ? null : _neuron.Host.Neurons[_sourceNeuronId]; }
+			get { return _source; } 
 		}
 		public double Value {
 			get { return _value; }
@@ -141,7 +184,14 @@ namespace Simulation {
 		}
 		public string Formula {
 			get { return _formula; }
-			set { _formula = value; } //UnityEngine.Debug.Log ("Setting "+_neuron.ID+" source formula to " + _formula); }
+			set { _formula = value; }
+		}
+		public bool Active {
+			get { return _active; }
+			set { _active = value; }
+		}
+		public Neuron Target {
+			get { return _target; }
 		}
 	}
 
@@ -168,25 +218,28 @@ namespace Simulation {
 
 
 	public class Neuron {
-		private List<NeuronInput> _neuronInputs  = new List<NeuronInput>();
+		private List<Link> _neuronInputs  = new List<Link>();
 		protected double _value;
 		protected double _nextValue;
 		private string _id;
 		private NeuronNetwork _host = null;
 		private bool _additive;
+		private bool _active;
 		public Neuron(string id, string formula, NeuronNetwork host = null, bool additive = true) {
 			_id = id;
 			_additive = additive;
 			_nextValue = _value = 0f;
+			_active = true;
 			AddToHost(host);
-			AddFormula(formula);
+			AddFormulas(formula);
 		}
 		public Neuron(string id, bool additive = true) {
 			_id = id;
 			_additive = additive;
 			_host = null;
+			_active = true;
 		}
-		public List<NeuronInput> Inputs {
+		public List<Link> Inputs {
 			get { return _neuronInputs; }
 		}
 
@@ -197,7 +250,7 @@ namespace Simulation {
 			if (_host != null)
 				_host.Neurons.Add(_id, this);
 
-			UnityEngine.Debug.Log("Added neuron "+_id);
+//			UnityEngine.Debug.Log("Added neuron "+_id);
 		}
 		public NeuronNetwork Host { 
 			get { return _host; } 
@@ -206,37 +259,30 @@ namespace Simulation {
 		public string ID { get { return _id; } } 
 		public virtual double Value { get { return _value; } set { _nextValue=value; } }
 
-		public void AddFormula(string formula) {
+		public void AddFormulas(string formula) {
 			if (formula.Length == 0) return;
 
 			string[] formulae = formula.Split(';');
 
 			foreach (string frm in formulae) {
-				//DebugX.Log(_debug, "NeuronLoader parsing "+items[i]);
-				string[] keyFormula = frm.Split(':');
-				if (keyFormula.Length != 2) {
-					DebugX.Assert(keyFormula.Length == 2, "NeuronLoader parsing error: '"+frm+"' does not conform to 'key, value'");
-					continue;
-				}
-
-				// DebugX.Log(true, "NeuronLoader inputs to neuron "+ID+" <- "+keyFormula[0].Trim() +", "+ keyFormula[1].Trim());
-
-				Inputs.Add( new NeuronInput(this, keyFormula[0].Trim(), keyFormula[1].Trim()) );
+				Inputs.Add( new Link( frm, _host ));
 			}
 		}
 
 		public void Prepare () {
-			_nextValue = _value;
+			_nextValue = 0.0;
 		}
 
 		public void Calculate () {
-			foreach (NeuronInput i in _neuronInputs)
+			if (!_active) return;
+
+			foreach (Link i in _neuronInputs)
 				if (_additive) 
 					_nextValue += i.Value;
 				else
 					_nextValue *= i.Value;
 
-			_nextValue = Math.Clamp(_nextValue, 0.0, 1.0);
+			_nextValue = Utils.Math.Clamp(_nextValue, 0.0, 1.0);
 
 //			UnityEngine.Debug.Log("Updating "+ID+" to "+_value+" additive = "+_additive);
 
@@ -246,7 +292,10 @@ namespace Simulation {
 			_value = _nextValue;
 		}
 
-
+		public bool Active {
+			get { return _active; }
+			set { _active = value; }
+		}
 	}
 }
 

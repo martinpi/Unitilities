@@ -23,9 +23,8 @@ THE SOFTWARE.
 */
 using UnityEngine;
 using System.Collections;
-using Simulation;
 
-namespace Economy {
+namespace Unitilities.Economy {
 	public struct StoredResource {
 		public Resource Description;
 		public float Amount;

@@ -28,7 +28,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 
-namespace Simulation {
+using Unitilities.File;
+
+namespace Unitilities.Simulation {
 
 	public class SimulationValue {
 

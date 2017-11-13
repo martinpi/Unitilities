@@ -41,42 +41,49 @@ public class DragAble : Selectable, IBeginDragHandler, IDragHandler, IEndDragHan
 	private float MaxValueX = 1f;
 	private float MaxValueY = 1f;
 
-	private Vector2 _offset;
+	private Vector2 _offset = Vector2.zero;
+	private Vector3[] _worldCorners;
 
 	private Vector2 _value;
 	public Vector2 Value { get { return _value; } set { SetValue(value); } }
 
 	[Serializable]
 	public class DragEvent : UnityEvent<Vector2> { }
-	public DragEvent onValueChanged = new DragEvent();
+	public DragEvent onDrag = new DragEvent();
+	public DragEvent onBeginDrag = new DragEvent();
+	public DragEvent onEndDrag = new DragEvent();
 
-	protected void Start() {
+	protected override void Start() {
 //		base.Start();
 		ParentRect = transform.parent.GetComponent<RectTransform>();
 		HandleRect = gameObject.GetComponent<RectTransform>();
+		_worldCorners = new Vector3[4];
 	}
 
 	public void OnBeginDrag(PointerEventData eventData) {
 		Vector2 ppos = eventData.position;
-		_offset = new Vector2(ppos.x - transform.position.x, 
-							  ppos.y - transform.position.y);
+		_offset.x = ppos.x - transform.position.x;
+		_offset.y = ppos.y - transform.position.y;
+		onBeginDrag.Invoke(_value);
 		SetFromEvent(eventData);
 	}
 	public void OnEndDrag(PointerEventData eventData) {
+		onEndDrag.Invoke(_value);
 	}
 	public void OnDrag(PointerEventData eventData) {
 		SetFromEvent(eventData);
 	}
 	private void SetFromEvent(PointerEventData eventData) {
 		Vector2 npos = eventData.position - _offset;
+		ParentRect.GetWorldCorners(_worldCorners);
 
 		npos.x = Mathf.Clamp(npos.x, 
-			ParentRect.transform.position.x-ParentRect.rect.size.x/2f+HandleRect.rect.size.x/2f, 
-			ParentRect.transform.position.x+ParentRect.rect.size.x/2f-HandleRect.rect.size.x/2f);
+			_worldCorners[0].x+HandleRect.rect.size.x, 
+			_worldCorners[2].x-HandleRect.rect.size.x);
 		npos.y = Mathf.Clamp(npos.y, 
-			ParentRect.transform.position.y-ParentRect.rect.size.y/2f+HandleRect.rect.size.y/2f, 
-			ParentRect.transform.position.y+ParentRect.rect.size.y/2f-HandleRect.rect.size.y/2f);
-
+			_worldCorners[0].y+HandleRect.rect.size.y, 
+			_worldCorners[1].y-HandleRect.rect.size.y);
+		
 		transform.position = npos;
 		SetValue(LocalToValue(transform.position));
 	}
@@ -108,7 +115,7 @@ public class DragAble : Selectable, IBeginDragHandler, IDragHandler, IEndDragHan
 
 	private void SetValue(Vector2 value) {
 		_value = value;
-		onValueChanged.Invoke(_value);
+		onDrag.Invoke(_value);
 	}
 
 }

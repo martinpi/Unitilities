@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License
 
-Copyright (c) 2015 Martin Pichlmair
+Copyright (c) 2016 Martin Pichlmair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+
 using UnityEngine;
-using System.Collections;
 
-namespace Pathfinding
-{
-	public class EPathNode : IPathNode<Object> {
-		public int X { get; set; }
-		public int Y { get; set; }
-		public bool Walkable {get; set;}
-		public bool IsWalkable(Object userContext)
-		{
-			return Walkable;
-		}
+namespace Unitilities.BoneSystem {
 
-		public float Heuristic(IPathNode<Object> toNode, Object userContext) {
-			return (Mathf.Abs(X - toNode.X) + Mathf.Abs(Y - toNode.Y));
+	public class Bone : MonoBehaviour {
+
+		public Vector2 From = Vector2.zero;
+		public Vector2 To = Vector2.zero;
+		public Vector2 Distance { get { return (To - From); } }
+
+		void OnDrawGizmos() {
+			Gizmos.color = UnityEngine.Color.red;
+			Gizmos.DrawLine(From.Vector3XY(), To.Vector3XY());
 		}
 	}
 }

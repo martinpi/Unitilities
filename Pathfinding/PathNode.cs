@@ -23,25 +23,20 @@ THE SOFTWARE.
 */
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using Unitilities.Collections.Generic;
 
-namespace Unitilities.Notifications {
-	public class SystemNotifications : MonoBehaviour {
+namespace Unitilities.Pathfinding {
+	public class EPathNode : IPathNode<Object> {
+		public int X { get; set; }
+		public int Y { get; set; }
+		public bool Walkable {get; set;}
+		public bool IsWalkable(Object userContext)
+		{
+			return Walkable;
+		}
 
-		bool FirstUpdate = true;
-
-		/* Be sure to execute this script with the lowest execution order, e.g. -1000! */
-
-		void Update () {
-			if (!FirstUpdate) return;
-			FirstUpdate = false;
-
-			NotificationCenter.Instance.PostNotification("Init");
-			NotificationCenter.Instance.PostNotification("PostInit");
-			NotificationCenter.Instance.PostNotification("PostPostInit");
-			NotificationCenter.Instance.PostNotification("InitDone");
+		public float Heuristic(IPathNode<Object> toNode, Object userContext) {
+			return (Mathf.Abs(X - toNode.X) + Mathf.Abs(Y - toNode.Y));
 		}
 	}
 }
-

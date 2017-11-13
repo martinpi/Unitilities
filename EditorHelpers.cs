@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License
 
-Copyright (c) 2015 Martin Pichlmair
+Copyright (c) 2016 Martin Pichlmair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace Unitilities {
-	
-	public class Pair<T1, T2> {
-		public T1 First { get; private set; }
-		public T2 Second { get; private set; }
-		internal Pair(T1 first, T2 second)
-		{
-			First = first;
-			Second = second;
+	public static class EditorHelpers {
+		public static void SetScriptExecutionPriority( string script, int priority ) {
+			#if UNITY_EDITOR
+			foreach (MonoScript monoScript in MonoImporter.GetAllRuntimeMonoScripts()) {
+				if (monoScript.name == script) {
+					if (MonoImporter.GetExecutionOrder(monoScript) != priority) {
+						MonoImporter.SetExecutionOrder(monoScript, priority);
+					}
+					break;
+				}
+			}
+			#endif
 		}
 	}
-
-	public static class Pair {
-		public static Pair<T1, T2> New<T1, T2>(T1 first, T2 second) {
-			return new Pair<T1, T2>(first, second);
-		}
-	}	
-
 }
 

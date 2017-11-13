@@ -25,7 +25,7 @@ THE SOFTWARE.
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Utils {
+namespace Unitilities.Utils {
 
 	public static class Helpers {
 		public static GameObject CreateObjectAt(GameObject theObject, Vector3 position, GameObject parent = null) {
@@ -61,6 +61,7 @@ namespace Utils {
 		public static void ReloadScene() {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		}
+
 	}
 
 }

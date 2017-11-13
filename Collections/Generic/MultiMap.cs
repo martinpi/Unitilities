@@ -22,26 +22,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Unitilities.Notifications {
-	public class SystemNotifications : MonoBehaviour {
+namespace Unitilities.Collections.Generic {
+	public class MultiMap<V> {
+		Dictionary<float, List<V>> _dictionary = new Dictionary<float, List<V>>();
 
-		bool FirstUpdate = true;
+		public void Add( float key, V value ) {
+			List<V> list;
+			if (this._dictionary.TryGetValue(key, out list)) {
+				list.Add(value);
+			} else {
+				list = new List<V>();
+				list.Add(value);
+				this._dictionary[key] = list;
+			}
+		}
 
-		/* Be sure to execute this script with the lowest execution order, e.g. -1000! */
+		public void Remove( float key ) {
+			this._dictionary.Remove(key);
+		}
 
-		void Update () {
-			if (!FirstUpdate) return;
-			FirstUpdate = false;
+		public IEnumerable<float> Keys {
+			get {
+				return this._dictionary.Keys;
+			}
+		}
 
-			NotificationCenter.Instance.PostNotification("Init");
-			NotificationCenter.Instance.PostNotification("PostInit");
-			NotificationCenter.Instance.PostNotification("PostPostInit");
-			NotificationCenter.Instance.PostNotification("InitDone");
+		public List<V> this [float key] {
+			get {
+				List<V> list;
+				if (!this._dictionary.TryGetValue(key, out list)) {
+					list = new List<V>();
+					this._dictionary[key] = list;
+				}
+				return list;
+			}
 		}
 	}
 }
-

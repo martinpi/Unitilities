@@ -29,8 +29,9 @@ Original source from: http://wiki.unity3d.com/index.php?title=CSharpNotification
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Unitilities.Collections.Generic;
 
-namespace Unitilities {
+namespace Unitilities.Notifications {
 	public delegate void OnNotificationDelegate (Notification note);
 
 	public sealed class NotificationCenter {
@@ -71,6 +72,7 @@ namespace Unitilities {
 		}
 
 		public void PostNotification (Notification note) {
+			if (!_listeners.ContainsKey(note.key)) return;
 			foreach (OnNotificationDelegate delegateCall in _listeners[note.key]) {
 				delegateCall(note);
 			}

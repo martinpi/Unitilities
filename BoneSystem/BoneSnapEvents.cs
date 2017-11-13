@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License
 
-Copyright (c) 2015 Martin Pichlmair
+Copyright (c) 2016 Martin Pichlmair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
-using System.Collections.Generic;
 
-namespace Unitilities.Notifications {
-	public class SystemNotifications : MonoBehaviour {
 
-		bool FirstUpdate = true;
+namespace Unitilities.BoneSystem {
 
-		/* Be sure to execute this script with the lowest execution order, e.g. -1000! */
+	public class BoneSnapEvents : MonoBehaviour {
 
-		void Update () {
-			if (!FirstUpdate) return;
-			FirstUpdate = false;
+		public UnityEvent Snapped;
+		public UnityEvent CanSnapped;
+		public UnityEvent Unsnapped;
 
-			NotificationCenter.Instance.PostNotification("Init");
-			NotificationCenter.Instance.PostNotification("PostInit");
-			NotificationCenter.Instance.PostNotification("PostPostInit");
-			NotificationCenter.Instance.PostNotification("InitDone");
+		public delegate void SnapAction(BoneDragger dragger, BoneSnapEvents target);
+		public event SnapAction OnSnap;
+		public event SnapAction OnCanSnap;
+		public event SnapAction OnUnsnap;
+
+		public void CanSnap(BoneDragger dragger) {
+			if (OnCanSnap != null) OnCanSnap(dragger, this);
+			CanSnapped.Invoke();
+		}
+
+		public void Snap(BoneDragger dragger) {
+			if (OnSnap != null) OnSnap(dragger, this);
+			Snapped.Invoke();
+		}
+
+		public void Unsnap(BoneDragger dragger) {
+			if (OnUnsnap != null) OnUnsnap(dragger, this);
+			Unsnapped.Invoke();
 		}
 	}
-}
 
+}

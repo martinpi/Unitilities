@@ -25,9 +25,10 @@ THE SOFTWARE.
 
 using UnityEngine;
 using System.Collections.Generic;
+using Unitilities.Collections.Generic;
 
-namespace Pathfinding
-{
+namespace Unitilities.Pathfinding {
+	
     public interface IPathNode<TUserContext>
     {
 		int X {get;}

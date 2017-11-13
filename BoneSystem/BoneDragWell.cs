@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License
 
-Copyright (c) 2015 Martin Pichlmair
+Copyright (c) 2016 Martin Pichlmair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using Unitilities.Utils;
 
-namespace Unitilities.Notifications {
-	public class SystemNotifications : MonoBehaviour {
+namespace Unitilities.BoneSystem {
 
-		bool FirstUpdate = true;
+	public class BoneDragWell : MonoBehaviour {
 
-		/* Be sure to execute this script with the lowest execution order, e.g. -1000! */
+		public GameObject _Prefab;
+		private GameObject _object;
+		public BoneDragger Dragger { get { return _object.GetComponent<BoneDragger>(); } }
 
-		void Update () {
-			if (!FirstUpdate) return;
-			FirstUpdate = false;
+		void Awake() {
+			TryCreate();
+			_object.SetActive(false);
+		}
 
-			NotificationCenter.Instance.PostNotification("Init");
-			NotificationCenter.Instance.PostNotification("PostInit");
-			NotificationCenter.Instance.PostNotification("PostPostInit");
-			NotificationCenter.Instance.PostNotification("InitDone");
+		void TryCreate() {
+			if (_Prefab != null && _object == null) {
+				_object = Helpers.CreateObjectAt(_Prefab, Vector3.zero, gameObject);
+			}
+		}
+
+		public void CreateDragger() {
+			TryCreate();
+			if (_object == null) return;
+
+			_object.transform.position = transform.position;
+			_object.GetComponent<BoneRectBridge>().Init();
+			_object.SetActive(true);
 		}
 	}
-}
 
+}

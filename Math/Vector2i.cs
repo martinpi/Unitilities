@@ -111,7 +111,10 @@ public struct Vector2i
 	public static Vector2i Scale(Vector2i a, Vector2i b) {
 		return new Vector2i( a.x*b.x, a.y*b.y );
 	}
-	
+
+	public static Vector2i operator -(Vector2i a) {
+		return new Vector2i(-a.x, -a.y);
+	}
 	public static Vector2i operator -(Vector2i a, Vector2i b) {
 		return new Vector2i(a.x-b.x, a.y-b.y);
 	}
@@ -181,6 +184,9 @@ public static class Vector2Extensions {
 
 	public static Vector3 Vector3XY (this Vector2 vector2, float z = 0f) {
 		return new Vector3 (vector2.x, vector2.y, z);
+	}
+	public static Vector3 Vector3XZ (this Vector2 vector2) {
+		return new Vector3 (vector2.x, 0f, vector2.y);
 	}
 }
 public static class Vector3Extensions {

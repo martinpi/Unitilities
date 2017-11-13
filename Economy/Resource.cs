@@ -24,8 +24,10 @@ THE SOFTWARE.
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Unitilities;
+using Unitilities.File;
 
-namespace Economy {
+namespace Unitilities.Economy {
 
 	public class Resource {
 		private static Dictionary<string, Resource> _allResources = new Dictionary<string, Resource>();

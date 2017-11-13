@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace Utils
+namespace Unitilities.Utils
 {
     public class MathParser
     {
@@ -70,7 +70,7 @@ namespace Utils
             }
             catch (Exception ex)
             {
-                throw new Exception("Error Occured While Calculating. Check Syntax", ex);
+                throw new Exception("Error Occured While Calculating '"+Formula+"'.", ex);
             }
         }
 

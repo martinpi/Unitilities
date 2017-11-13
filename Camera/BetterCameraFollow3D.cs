@@ -27,7 +27,7 @@ using UnityEngine;
 
 namespace Unitilities
 {
-	public class BetterCameraFollow2D : MonoBehaviour
+	public class BetterCameraFollow3D : MonoBehaviour
 	{
 		public float LookAheadFactor { get { return lookAheadFactor; } set { lookAheadFactor = value; } }
 		public float Damping { get { return damping; } set { damping = value; } }
@@ -39,6 +39,11 @@ namespace Unitilities
 		public float lookAheadMoveThreshold = 0.1f;
 		public bool fixedX = false;
 		public bool fixedY = false;
+
+		// map min .. max to (current y) .. (current y + speedZoomMax)
+		public float speedZoomMax = 0f;
+		public float speedMin = 0f;
+		public float speedMax = 1f;
 
 		public bool unidirectionalX = false;
 		public bool unidirectionalY = false;
@@ -55,12 +60,8 @@ namespace Unitilities
 		}
 
 		public void JumpToTarget() {
-			JumpTo(target.position);
-		}
-
-		public void JumpTo(Vector3 position) {
 			m_LookAheadPos = Vector3.zero;
-			transform.position = m_LastTargetPosition = position;
+			transform.position = m_LastTargetPosition = target.position;
 		}
 
 		void Update() {
@@ -72,7 +73,10 @@ namespace Unitilities
 			else
 				m_LookAheadPos = Vector3.MoveTowards(m_LookAheadPos, Vector3.zero, Time.deltaTime*lookAheadReturnSpeed);
 
-			Vector3 aheadTargetPos = target.position + m_LookAheadPos + Vector3.forward*m_Offset.z;
+			float speedZoom = Mathf.Clamp01(moveDirection.magnitude - speedMin)/(speedMax-speedMin) * speedZoomMax;
+
+			Vector3 aheadTargetPos = target.position + m_LookAheadPos + Vector3.up * m_Offset.y + Vector3.up * speedZoom;
+
 			Vector3 newPos = Vector3.SmoothDamp(transform.position, aheadTargetPos, ref m_CurrentVelocity, damping );
 
 			if (fixedX) newPos.x = m_Offset.x;

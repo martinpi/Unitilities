@@ -1,7 +1,8 @@
 ﻿/*
 The MIT License
 
-Copyright (c) 2015 Martin Pichlmair
+Copyright (c) 2016 Martin Pichlmair
+Based on http://www.kinematicsoup.com/news/2016/8/9/rrypp5tkubynjwxhxjzd42s3o034o8 by Scott Sewell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +23,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
-namespace Unitilities.Notifications {
-	public class SystemNotifications : MonoBehaviour {
+/*
+Used to call a couple methods in InterpolatedTransform both before and after other script’s FixedUpdates. Must be placed on objects that also have InterpolatedTransform attached.
+*/
 
-		bool FirstUpdate = true;
+namespace Unitilities.FrameInterpolater {
 
-		/* Be sure to execute this script with the lowest execution order, e.g. -1000! */
+	public class InterpolatedTransformUpdater : MonoBehaviour {
+		private InterpolatedTransform m_interpolatedTransform;
 
-		void Update () {
-			if (!FirstUpdate) return;
-			FirstUpdate = false;
+		void Awake() {
+			m_interpolatedTransform = GetComponent<InterpolatedTransform>();
+		}
 
-			NotificationCenter.Instance.PostNotification("Init");
-			NotificationCenter.Instance.PostNotification("PostInit");
-			NotificationCenter.Instance.PostNotification("PostPostInit");
-			NotificationCenter.Instance.PostNotification("InitDone");
+		void FixedUpdate() {
+			m_interpolatedTransform.LateFixedUpdate();
 		}
 	}
 }
-

@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License
 
-Copyright (c) 2015 Martin Pichlmair
+Copyright (c) 2016 Martin Pichlmair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
-namespace Unitilities.Notifications {
-	public class SystemNotifications : MonoBehaviour {
+namespace Unitilities.BoneSystem {
 
-		bool FirstUpdate = true;
-
-		/* Be sure to execute this script with the lowest execution order, e.g. -1000! */
-
-		void Update () {
-			if (!FirstUpdate) return;
-			FirstUpdate = false;
-
-			NotificationCenter.Instance.PostNotification("Init");
-			NotificationCenter.Instance.PostNotification("PostInit");
-			NotificationCenter.Instance.PostNotification("PostPostInit");
-			NotificationCenter.Instance.PostNotification("InitDone");
-		}
+	public class BoneSnapTarget : MonoBehaviour {
+		public BoneSnapEvents Events { get { return GetComponent<BoneSnapEvents>(); } }
 	}
-}
 
+}
