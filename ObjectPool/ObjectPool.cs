@@ -97,7 +97,11 @@ public class ObjectPool : MonoBehaviour
 			i++;
 		}
 	}
+<<<<<<< Updated upstream
 
+=======
+	
+>>>>>>> Stashed changes
 	/// <summary>
 	/// Gets a new object for the name type provided.  If no object type exists or if onlypooled is true and there is no objects of that type in the pool
 	/// then null will be returned.
@@ -129,9 +133,13 @@ public class ObjectPool : MonoBehaviour
 					return pooledObject;
 					
 				} else if(!onlyPooled) {
+<<<<<<< Updated upstream
 					GameObject pooledObject = Instantiate(objectPrefabs[i]) as GameObject;
 					pooledObject.name = prefab.name;
 					return pooledObject;
+=======
+					return Instantiate(objectPrefabs[i]) as GameObject;
+>>>>>>> Stashed changes
 				}
 				
 				break;
