@@ -179,8 +179,8 @@ public static class Vector2Extensions {
 		return n;
 	}
 
-	public static Vector3 Vector3XY (this Vector2 vector2) {
-		return new Vector3 (vector2.x, vector2.y, 0f);
+	public static Vector3 Vector3XY (this Vector2 vector2, float z = 0f) {
+		return new Vector3 (vector2.x, vector2.y, z);
 	}
 }
 public static class Vector3Extensions {
