@@ -56,20 +56,15 @@ public class QuadGrid : MonoBehaviour {
 		Vector2[] uv = new Vector2[vertices.Length];
 		Vector4[] tangents = new Vector4[vertices.Length];
 		Vector4 tangent = new Vector4(1f, 0f, 0f, -1f);
+		Color colorT = Color.red;
+		Color[] colors = new Color[vertices.Length];
 		for (int i = 0, y = 0; y <= rows; y++) {
 			for (int x = 0; x <= columns; x++, i++) {
 				vertices[i] = new Vector3(x, y);
 				uv[i] = new Vector2((float)x / columns, (float)y / rows);
 				tangents[i] = tangent;
+				colors[i] = colorT;
 			}
-		}
-
-		Color colorT = Color.red;
-		Color[] colors = new Color[vertices.Length];
-		for (int i = 0; i < colors.Length; i++) {
-			if ((i % 3) == 0)
-				colorT = new Color(Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), 1.0f);
-			colors[i] = colorT;
 		}
 
 		int[] triangles = new int[columns * rows * 6];
