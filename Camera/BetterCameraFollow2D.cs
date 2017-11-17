@@ -59,6 +59,7 @@ namespace Unitilities
 		}
 
 		public void JumpTo(Vector3 position) {
+			position.z = transform.position.z;
 			m_LookAheadPos = Vector3.zero;
 			transform.position = m_LastTargetPosition = position;
 		}
