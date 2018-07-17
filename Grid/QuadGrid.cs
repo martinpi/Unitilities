@@ -39,7 +39,7 @@ public class QuadGrid : MonoBehaviour {
 	private Vector3[] vertices;
 
 	void Awake () {
-		CreateGrid(rows, columns);
+		// CreateGrid(rows, columns);
 	}	
 
 	public void CreateGrid(int rows, int columns) {
@@ -50,7 +50,7 @@ public class QuadGrid : MonoBehaviour {
 
 	void CreateQuadMesh() {
 		GetComponent<MeshFilter>().sharedMesh = mesh = new Mesh();
-		mesh.name = "Procedural Grid";
+		mesh.name = "Procedural Grid "+columns+" x "+rows;
 
 		vertices = new Vector3[(columns + 1) * (rows + 1)];
 		Vector2[] uv = new Vector2[vertices.Length];
