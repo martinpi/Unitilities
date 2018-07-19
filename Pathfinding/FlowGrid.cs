@@ -8,6 +8,7 @@ public class FlowGrid : MonoBehaviour {
 	public int Width;
 	public int Height;
 	public bool FourWay = false;
+	public Vector2Int Target = Vector2Int.zero;
 
 	private Vector2[,] _flowField;
 	private int[,] _djikstraField;
@@ -15,18 +16,27 @@ public class FlowGrid : MonoBehaviour {
 	void OnEnable() {
 		_flowField = new Vector2[Width, Height];
 		_djikstraField = new int[Width, Height];
-		Randomize();
+		Reset();
+	
+		if (Target!=Vector2Int.zero) Recalculate();
 	}
 
 	public void Randomize() {
-		initFields();
+		Reset();
 		addRandomWalls((Width + Height)*2 );
-		generateFlowField(new Vector2Int(
+
+		Target = new Vector2Int(
 			1+(int)(Random.value*((float)Width-2)), 
-			1+(int)(Random.value*((float)Height-2))));
+			1+(int)(Random.value*((float)Height-2)));
+
+		generateFlowField(Target);
 	}
-	
-	public void initFields() {
+
+	public void Recalculate() {
+		generateFlowField(Target);
+	}
+
+	public void Reset() {
 		for (int x=0; x<Width; ++x) {
 			for (int y=0; y<Height; ++y) {
 				_flowField[x,y] = Vector2.zero;
@@ -88,8 +98,8 @@ public class FlowGrid : MonoBehaviour {
 		}
 	}
 
-	void setWall(int x, int y) {
-		_djikstraField[ x, y ] = int.MinValue;
+	void setWall(int x, int y, int value) {
+		_djikstraField[ x, y ] = value;
 	}
 
 	public Vector3Int getGridPosition( Vector3 worldPosition ) {
@@ -100,14 +110,27 @@ public class FlowGrid : MonoBehaviour {
 		return gridPosition;
 	}
 
-	public void setWall( Vector3 worldPosition ) {
+	public Vector3 getWorldPosition( Vector3Int gridPosition ) {
+		gridPosition.x = Mathi.Clamp( gridPosition.x, 0, Width-1 );
+		gridPosition.y = Mathi.Clamp( gridPosition.y, 0, Height-1 );		
+		return transform.localToWorldMatrix * new Vector3( gridPosition.x, gridPosition.y, gridPosition.z );		
+	}
+
+	public void setWall( Vector3 worldPosition, bool wall ) {
 		Vector3Int gridPosition = getGridPosition(worldPosition);
-		setWall( gridPosition.x, gridPosition.y );
+		setWall( gridPosition.x, gridPosition.y, wall ? int.MinValue : -1 );
+	}
+	public void setWall( Vector3Int gridPosition, bool wall ) {
+		setWall( gridPosition.x, gridPosition.y, wall ? int.MinValue : -1 );
+	}
+
+	public bool isWall ( Vector3Int gridPosition ) {
+		return _djikstraField[ gridPosition.x, gridPosition.y ] == int.MinValue;
 	}
 
 	void addRandomWalls(int count) { 
 		for (int i=0; i<count; ++i)
-			setWall( (int)(Random.value * (float)Width), (int)(Random.value*(float)Height) );
+			setWall( (int)(Random.value * (float)Width), (int)(Random.value*(float)Height), int.MinValue );
 	}
 
 	void generateFlowField(Vector2Int target) {
