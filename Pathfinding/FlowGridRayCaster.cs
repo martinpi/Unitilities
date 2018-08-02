@@ -42,9 +42,6 @@ public class FlowGridRayCaster : MonoBehaviour {
 			for (gridPos.y = 0; gridPos.y < _grid.Height; gridPos.y++) {
 				bool wall = Physics.Raycast(_grid.getWorldPosition(gridPos), Vector3.back, out hit, Altitude+1f, 1<<gameObject.layer);
 				_grid.setWall(gridPos, wall);
-
-				// if (wall) Debug.Log("wall at "+gridPos);
-
 			}
 		}
 		_grid.Recalculate();

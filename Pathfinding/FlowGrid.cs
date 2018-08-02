@@ -9,6 +9,7 @@ public class FlowGrid : MonoBehaviour {
 	public int Height;
 	public bool FourWay = false;
 	public Vector2Int Target = Vector2Int.zero;
+	public bool Dirty = true;
 
 	private Vector2[,] _flowField;
 	private int[,] _djikstraField;
@@ -33,7 +34,10 @@ public class FlowGrid : MonoBehaviour {
 	}
 
 	public void Recalculate() {
+		// TODO: we can make updating asyncronous later
+		Dirty = true;
 		generateFlowField(Target);
+		Dirty = false;
 	}
 
 	public void Reset() {
@@ -171,6 +175,35 @@ public class FlowGrid : MonoBehaviour {
 			}
 		}
 	}
+
+	public float getInterpolatedDistance(Vector3 worldPosition) {
+
+		Vector3 localPosition = transform.worldToLocalMatrix * worldPosition;
+		Vector3Int gridPosition = getGridPosition(worldPosition);
+
+		// we can't interpolate the areas at the borders
+		gridPosition.x = Mathi.Clamp( gridPosition.x, 0, Width-2 );
+		gridPosition.y = Mathi.Clamp( gridPosition.y, 0, Height-2 );
+
+		//The 4 weights we'll interpolate, see http://en.wikipedia.org/wiki/File:Bilininterp.png for the coordinates
+		float f00 = (float)_djikstraField[ gridPosition.x, gridPosition.y ];
+		float f01 = (float)_djikstraField[ gridPosition.x, gridPosition.y + 1 ];
+		float f10 = (float)_djikstraField[ gridPosition.x + 1, gridPosition.y ];
+		float f11 = (float)_djikstraField[ gridPosition.x + 1, gridPosition.y + 1 ];
+
+		//Do the x interpolations
+		float xWeight = localPosition.x - (float)gridPosition.x;
+
+		var top = f00 * (1f - xWeight) + f10 * xWeight;
+		var bottom = f01 * (1f - xWeight) + f11 * xWeight;
+
+		//Do the y interpolation
+		float yWeight = localPosition.y - (float)gridPosition.y;
+
+		//This is now the direction we want to be travelling in (needs to be normalized)
+		return (top * (1f - yWeight) + bottom * yWeight);
+	}
+
 
 	public Vector3 getInterpolatedForces(Vector3 worldPosition) {
 
