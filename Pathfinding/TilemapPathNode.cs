@@ -1,7 +1,7 @@
-﻿/*
+/*
 The MIT License
 
-Copyright (c) 2018 Martin Pichlmair
+Copyright (c) 2019 Martin Pichlmair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using Unitilities.Collections.Generic;
 
-public class FlowGridFollow : MonoBehaviour {
+namespace Unitilities.Pathfinding {
+	public class TilemapPathNode : IPathNode<Tilemap> {
+		public int X { get; set; }
+		public int Y { get; set; }
+		// public bool IsWalkable(Tilemap userContext) {
+		// 	return userContext.HasTile(new Vector3Int(X, Y, 0));
+		// }
+		public bool Walkable {get; set;}
+		public bool IsWalkable(Tilemap userContext) {
+			return Walkable;
+		}
 
-	public FlowGrid FlowGrid;
-	public float Force = 1f;
-	public bool RandomStartPosition = true;
-
-	private bool _active = false;
-	private Rigidbody2D _body2D;
-
-	void Start () {
-		_body2D = GetComponent<Rigidbody2D>();
-		StartCoroutine(StartMoving(2f));
-		if (RandomStartPosition) {
-			Vector2 pos = Vector2.zero;
-			pos.x = ((float)FlowGrid.Width) * Random.value;
-			pos.y = ((float)FlowGrid.Height) * Random.value;
-			// _body2D.MovePosition(pos);
-			transform.position = pos.Vector3XY();
+		public float Heuristic(IPathNode<Tilemap> toNode, Tilemap userContext) {
+			return (Mathf.Abs(X - toNode.X) + Mathf.Abs(Y - toNode.Y));
 		}
 	}
-	
-	void Update () {
-		if (!_active) return;
-
-		Vector3 dir = FlowGrid.getInterpolatedForces(transform.position);
-		_body2D.AddForce(Force * dir.Vector2XY());
-	}
-
-	IEnumerator StartMoving(float delay) {
-		yield return new WaitForSeconds(delay);
-		_active = true;
-
-	}
-
 }

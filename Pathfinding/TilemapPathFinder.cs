@@ -1,7 +1,7 @@
-﻿/*
+/*
 The MIT License
 
-Copyright (c) 2015 Martin Pichlmair
+Copyright (c) 2019 Martin Pichlmair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,41 +23,59 @@ THE SOFTWARE.
 */
 
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
 namespace Unitilities.Pathfinding {
 
-	public class PathFinder : MonoBehaviour {
+	public class TilemapPathFinder : MonoBehaviour {
 
-		private Pathfinding.EPathNode[,] _grid;
-		private Pathfinding.AStar<Pathfinding.EPathNode, Object> _aStar;
+        public Tilemap walkableMap;
+
+		private Pathfinding.TilemapPathNode[,] _grid;
+		private Pathfinding.AStar<Pathfinding.TilemapPathNode, Tilemap> _aStar;
 
 		public void CreateGrid( int width, int height ) {
-			_grid = new Pathfinding.EPathNode[width, height];
+			_grid = new Pathfinding.TilemapPathNode[width, height];
 		}
 
 		public void SetPathNode( int x, int y, bool walkable ) {
-			_grid[x, y] = new Pathfinding.EPathNode() {
+			_grid[x, y] = new Pathfinding.TilemapPathNode() {
 				Walkable = walkable,
 				X = x,
 				Y = y,
 			};
 		}
 
-		public void AddPathNode( Pathfinding.EPathNode node ) {
+		public void AddPathNode( Pathfinding.TilemapPathNode node ) {
 			_grid[node.X, node.Y] = node;
 		}
 
 		public void UpdateGrid() {
-			_aStar = new Pathfinding.AStar<Pathfinding.EPathNode, Object>(_grid);
+			_aStar = new Pathfinding.AStar<Pathfinding.TilemapPathNode, Tilemap>(_grid);
 		}
 
-		public LinkedList<Pathfinding.EPathNode> FindPath( Vector2 from, Vector2 to ) {
+		public LinkedList<Pathfinding.TilemapPathNode> FindPath( Vector3Int from, Vector3Int to ) {
 			return _aStar.Search(from, to, null);
 		}
 
-		public bool IsReachable( Vector2 from, Vector2 to, int steps ) {
-			return (_aStar.Search(from, to, null).Count <= steps);
+        public void GetWalkableAreas( ) {
+			BoundsInt bounds = walkableMap.cellBounds;
+            
+			for (int x = bounds.min.x; x < bounds.max.x; ++x) {
+				for (int y = bounds.min.y; y < bounds.max.y; ++y) {
+                    Vector3Int pos = new Vector3Int(x,y,0);
+					SetPathNode(x-bounds.min.x, y-bounds.min.y, walkableMap.HasTile(pos));
+				}
+			}
+			UpdateGrid();
 		}
+
+		private void Start() {
+			CreateGrid(walkableMap.cellBounds.size.x, walkableMap.cellBounds.size.y);
+			GetWalkableAreas();
+
+		}
+
 	}
 }

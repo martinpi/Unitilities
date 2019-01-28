@@ -54,7 +54,7 @@ namespace Unitilities.Gameplay
 						{
 							Instantiate(source, targetGameObject.transform.position,
 								targetGameObject.transform.rotation);
-							DestroyObject(targetGameObject);
+							Destroy(targetGameObject);
 						}
 					}
 					break;

@@ -30,8 +30,7 @@ namespace Unitilities.Pathfinding {
 		public int X { get; set; }
 		public int Y { get; set; }
 		public bool Walkable {get; set;}
-		public bool IsWalkable(Object userContext)
-		{
+		public bool IsWalkable(Object userContext) {
 			return Walkable;
 		}
 
