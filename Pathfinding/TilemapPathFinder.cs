@@ -56,7 +56,7 @@ namespace Unitilities.Pathfinding {
 		}
 
 		public LinkedList<Pathfinding.TilemapPathNode> FindPath( Vector3Int from, Vector3Int to ) {
-			return _aStar.Search(from, to, null);
+			return _aStar.Search(from.x, from.y, to.x, to.y, walkableMap);
 		}
 
         public void GetWalkableAreas( ) {
