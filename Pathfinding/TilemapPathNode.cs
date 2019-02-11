@@ -37,6 +37,7 @@ namespace Unitilities.Pathfinding {
 		public bool IsWalkable(Tilemap userContext) {
 			return Walkable;
 		}
+		public Vector3Int position { get { return new Vector3Int(X, Y, 0); } }
 
 		public float Heuristic(IPathNode<Tilemap> toNode, Tilemap userContext) {
 			return (Mathf.Abs(X - toNode.X) + Mathf.Abs(Y - toNode.Y));

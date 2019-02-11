@@ -32,6 +32,7 @@ namespace Unitilities.Pathfinding {
 
         public Tilemap walkableMap;
 
+		private Vector3Int _offset;
 		private Pathfinding.TilemapPathNode[,] _grid;
 		private Pathfinding.AStar<Pathfinding.TilemapPathNode, Tilemap> _aStar;
 
@@ -42,8 +43,8 @@ namespace Unitilities.Pathfinding {
 		public void SetPathNode( int x, int y, bool walkable ) {
 			_grid[x, y] = new Pathfinding.TilemapPathNode() {
 				Walkable = walkable,
-				X = x,
-				Y = y,
+				X = x+_offset.x,
+				Y = y+_offset.y,
 			};
 		}
 
@@ -56,7 +57,8 @@ namespace Unitilities.Pathfinding {
 		}
 
 		public LinkedList<Pathfinding.TilemapPathNode> FindPath( Vector3Int from, Vector3Int to ) {
-			return _aStar.Search(from.x, from.y, to.x, to.y, walkableMap);
+			// return _aStar.Search(from.x-_offset.x, from.y-_offset.y, to.x-_offset.x, to.y-_offset.y, walkableMap);
+			return _aStar.Search(from.x-_offset.x, from.y-_offset.y, to.x-_offset.x, to.y-_offset.y, walkableMap);
 		}
 
         public void GetWalkableAreas( ) {
@@ -71,10 +73,10 @@ namespace Unitilities.Pathfinding {
 			UpdateGrid();
 		}
 
-		private void Start() {
+		private void OnEnable() {
+			_offset = walkableMap.cellBounds.min;
 			CreateGrid(walkableMap.cellBounds.size.x, walkableMap.cellBounds.size.y);
 			GetWalkableAreas();
-
 		}
 
 	}

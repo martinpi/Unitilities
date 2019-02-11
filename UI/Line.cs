@@ -26,41 +26,41 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+namespace Unitilities {
 
-[AddComponentMenu("UI/Line", 56)]
-[RequireComponent (typeof (RectTransform))]
-[ExecuteInEditMode]
-public class Line : Graphic 
-{
-	public float Width = 1f;
+	[AddComponentMenu("UI/Line", 56)]
+	[RequireComponent (typeof (RectTransform))]
+	[ExecuteInEditMode]
+	public class Line : Graphic {
+		public float Width = 1f;
 
-	protected override void OnPopulateMesh(VertexHelper vh)
-	{
-		Vector2 corner1 = Vector2.zero;
-		Vector2 corner2 = Vector2.one;
+		protected override void OnPopulateMesh(VertexHelper vh) {
+			Vector2 corner1 = Vector2.zero;
+			Vector2 corner2 = Vector2.one;
 
-		corner1.x -= rectTransform.pivot.x;
-		corner1.y -= rectTransform.pivot.y;
-		corner2.x -= rectTransform.pivot.x;
-		corner2.y -= rectTransform.pivot.y;
+			corner1.x -= rectTransform.pivot.x;
+			corner1.y -= rectTransform.pivot.y;
+			corner2.x -= rectTransform.pivot.x;
+			corner2.y -= rectTransform.pivot.y;
 
-		corner1.x *= rectTransform.rect.width;
-		corner1.y *= rectTransform.rect.height;
-		corner2.x *= rectTransform.rect.width;
-		corner2.y *= rectTransform.rect.height;
+			corner1.x *= rectTransform.rect.width;
+			corner1.y *= rectTransform.rect.height;
+			corner2.x *= rectTransform.rect.width;
+			corner2.y *= rectTransform.rect.height;
 
-		Vector2 normal = (corner2 - corner1).normalized;
+			Vector2 normal = (corner2 - corner1).normalized;
 
-		var uv = new Vector4(0f,0f,1f,1f);
+			var uv = new Vector4(0f, 0f, 1f, 1f);
 
-		var color32 = color;
+			var color32 = color;
 
-		vh.AddVert(new Vector3(corner1.x + normal.y * Width/2f, corner1.y - normal.x * Width/2f), color32, new Vector2(uv.x, uv.y));
-		vh.AddVert(new Vector3(corner1.x - normal.y * Width/2f, corner1.y + normal.x * Width/2f), color32, new Vector2(uv.x, uv.w));
-		vh.AddVert(new Vector3(corner2.x - normal.y * Width/2f, corner2.y + normal.x * Width/2f), color32, new Vector2(uv.z, uv.w));
-		vh.AddVert(new Vector3(corner2.x + normal.y * Width/2f, corner2.y - normal.x * Width/2f), color32, new Vector2(uv.z, uv.y));
+			vh.AddVert(new Vector3(corner1.x + normal.y * Width / 2f, corner1.y - normal.x * Width / 2f), color32, new Vector2(uv.x, uv.y));
+			vh.AddVert(new Vector3(corner1.x - normal.y * Width / 2f, corner1.y + normal.x * Width / 2f), color32, new Vector2(uv.x, uv.w));
+			vh.AddVert(new Vector3(corner2.x - normal.y * Width / 2f, corner2.y + normal.x * Width / 2f), color32, new Vector2(uv.z, uv.w));
+			vh.AddVert(new Vector3(corner2.x + normal.y * Width / 2f, corner2.y - normal.x * Width / 2f), color32, new Vector2(uv.z, uv.y));
 
-		vh.AddTriangle(0, 1, 2);
-		vh.AddTriangle(2, 3, 0);
+			vh.AddTriangle(0, 1, 2);
+			vh.AddTriangle(2, 3, 0);
+		}
 	}
 }

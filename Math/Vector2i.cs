@@ -220,6 +220,7 @@ public static class Vector3Extensions {
 		if (dist < Mathf.Epsilon) return target;
 		return n + Vector3.ClampMagnitude(target-n, Mathf.Min(dist, a));
 	}
+
 }
 
 /* 
