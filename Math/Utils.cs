@@ -24,9 +24,9 @@ THE SOFTWARE.
 
 using UnityEngine;
 
-namespace Unitilities.Utils {
+namespace Unitilities.Math {
 
-	public class Math {
+	public class Utils {
 
 		public static float TWO_PI = Mathf.PI * 2f;
 		public static float HALF_PI = Mathf.PI / 2f;
