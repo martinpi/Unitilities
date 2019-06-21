@@ -23,7 +23,9 @@ THE SOFTWARE.
 */
 
 using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -31,6 +33,45 @@ using System.Linq;
 namespace Unitilities.File {
 
 	public static class TextFileReader {
+
+		/*StartCoroutine(LoadTextListStreaming(done,value  => {
+				if(done != null) {
+					if(done) {
+						print(value);
+					} else {
+						print("Error: "+value);
+					}
+				}	
+			})); */
+
+		private static IEnumerator LoadTextListStreaming(string url, System.Action<bool, string> success) {
+			List<string> entries = new List<string>();
+
+			if (url.Contains("://") || url.Contains(":///")) {
+				UnityWebRequest www = UnityWebRequest.Get(url);
+				yield return www.SendWebRequest();
+
+				if (www.isNetworkError) {
+					success(false, www.error);
+				}
+				if (www.isDone) {
+					success(true, www.downloadHandler.text);
+				}
+			} else {
+				success(true, System.IO.File.ReadAllText(url));
+			}
+		}
+		public static void LoadTextFileStreaming(MonoBehaviour behaviour, string url, System.Action<bool, string> callback) {
+			behaviour.StartCoroutine(LoadTextListStreaming( url, (success, value) => {
+				if (success) {
+					callback(true, value);
+				} else {
+					Debug.Log("Error: " + value);
+					callback(false, value);
+				}
+			}));
+		}
+
 		public static List<string> LoadTextList( string filename ) {
 			StringReader reader = null; 
 			List<string> entries = new List<string>();
