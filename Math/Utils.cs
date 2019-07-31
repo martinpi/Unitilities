@@ -157,6 +157,15 @@ namespace Unitilities.Math {
 		public static Vector3Int Div(this Vector3Int lhs, int rhs) {
 			return new Vector3Int(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
 		}
+		public static Vector2Int Div(this Vector2Int lhs, int rhs) {
+			return new Vector2Int(lhs.x / rhs, lhs.y / rhs);
+		}
+		public static Vector3Int Mul(this Vector3Int lhs, int rhs) {
+			return new Vector3Int(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
+		}
+		public static Vector2Int Mul(this Vector2Int lhs, int rhs) {
+			return new Vector2Int(lhs.x * rhs, lhs.y * rhs);
+		}
 
 		public static bool Overlaps(this RectInt rect, RectInt other) {
 			return !(rect.max.x < other.min.x || rect.min.x > other.max.x ||
