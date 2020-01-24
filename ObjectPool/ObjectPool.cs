@@ -69,7 +69,7 @@ public class ObjectPool : MonoBehaviour
 	public void Init() {
 		if (_initialized) return;
 		_initialized = true;
-		containerObject = new GameObject("ObjectPool");
+		containerObject = gameObject; //new GameObject("ObjectPool");
 		
 		//Loop through the object prefabs and make a new list for each one.
 		//We do this because the pool can only support prefabs set to it in the editor,
@@ -117,13 +117,13 @@ public class ObjectPool : MonoBehaviour
 		{
 			GameObject prefab = objectPrefabs[i];
 			if(prefab.name == objectType)
-			{
-				
+			{				
 				if(pooledObjects[i].Count > 0)
 				{
 					GameObject pooledObject = pooledObjects[i][0];
 					pooledObjects[i].RemoveAt(0);
-					pooledObject.transform.parent = null;
+					// pooledObject.transform.parent = null;
+					pooledObject.transform.SetParent(null);
 					pooledObject.SetActive(true);
 					
 					return pooledObject;
@@ -147,17 +147,19 @@ public class ObjectPool : MonoBehaviour
 	/// <param name='obj'>
 	/// Object to be pooled.
 	/// </param>
-	public void PoolObject ( GameObject obj )
+	public bool PoolObject ( GameObject obj )
 	{
 		for ( int i=0; i<objectPrefabs.Length; i++)
 		{
-			if(objectPrefabs[i].name == obj.name)
-			{
-				obj.SetActive(false);
-				obj.transform.parent = containerObject.transform;
-				pooledObjects[i].Add(obj);
-				return;
-			}
+			if (objectPrefabs[i].name != obj.name) continue;
+			
+			obj.SetActive(false);
+			obj.transform.SetParent(containerObject.transform);
+
+			pooledObjects[i].Add(obj);
+			return true;
 		}
+
+		return false;
 	}
 }
