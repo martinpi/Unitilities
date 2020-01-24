@@ -25,6 +25,7 @@ THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using Unitilities;
 
 namespace Unitilities.Collections.Generic {
    /// <summary>
@@ -210,7 +211,8 @@ namespace Unitilities.Collections.Generic {
          }
 
          // get the maximal count of items to be moved
-         int count = Math.Min(Count, Capacity - 1) - index;
+         int count = Mathi.Min(Count, Capacity - 1) - index;
+		 
          // get the relative position of the new item within the buffer
          int index2 = (_position - Count + index) % Capacity;
 

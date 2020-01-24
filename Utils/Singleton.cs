@@ -5,6 +5,8 @@
 /// e.g. public class MyClassName : Singleton<MyClassName> {}
 /// </summary>
 
+/* this singleton is not persistent */
+
 namespace Unitilities.Utils {
 
 	public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
@@ -12,6 +14,15 @@ namespace Unitilities.Utils {
 		private static bool m_ShuttingDown = false;
 		private static object m_Lock = new object();
 		private static T m_Instance;
+
+		private void Awake() {
+			if (m_Instance == null) {
+				m_Instance = (T)FindObjectOfType(typeof(T));
+			// 	DontDestroyOnLoad(m_Instance.gameObject);
+			// } else {
+			// 	Destroy(m_Instance);
+			}
+		}
 
 		/// <summary>
 		/// Access singleton instance through this propriety.
@@ -36,8 +47,7 @@ namespace Unitilities.Utils {
 							m_Instance = singletonObject.AddComponent<T>();
 							singletonObject.name = typeof(T).ToString() + " (Singleton)";
 
-							// Make instance persistent.
-							DontDestroyOnLoad(singletonObject);
+							// DontDestroyOnLoad(singletonObject);
 						}
 					}
 
@@ -46,15 +56,10 @@ namespace Unitilities.Utils {
 			}
 		}
 
-
 		private void OnApplicationQuit() {
 			m_ShuttingDown = true;
 		}
 
-
-		private void OnDestroy() {
-			m_ShuttingDown = true;
-		}
 	}
 
 }

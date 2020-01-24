@@ -24,9 +24,9 @@ THE SOFTWARE.
 
 using UnityEngine;
 
-namespace Unitilities.Utils {
+namespace Unitilities.Math {
 
-	public class Math {
+	public class Utils {
 
 		public static float TWO_PI = Mathf.PI * 2f;
 		public static float HALF_PI = Mathf.PI / 2f;
@@ -156,6 +156,15 @@ namespace Unitilities.Utils {
 	public static class Extensions {
 		public static Vector3Int Div(this Vector3Int lhs, int rhs) {
 			return new Vector3Int(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
+		}
+		public static Vector2Int Div(this Vector2Int lhs, int rhs) {
+			return new Vector2Int(lhs.x / rhs, lhs.y / rhs);
+		}
+		public static Vector3Int Mul(this Vector3Int lhs, int rhs) {
+			return new Vector3Int(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
+		}
+		public static Vector2Int Mul(this Vector2Int lhs, int rhs) {
+			return new Vector2Int(lhs.x * rhs, lhs.y * rhs);
 		}
 
 		public static bool Overlaps(this RectInt rect, RectInt other) {

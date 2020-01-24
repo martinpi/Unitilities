@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+/* Unity has their own implementation by now but I'll keep this in order to
+   maintain compatibility with older projects.
+ */
+
 using System;
 using UnityEngine;
 using Serializable = System.SerializableAttribute;
