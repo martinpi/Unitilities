@@ -13,7 +13,7 @@ namespace Unitilities.Gameplay {
             gameObject.SetActive(false);
         }
 
-		void Start() {
+		private void OnEnable() {
 			StartCoroutine(Deactivate(Delay));
 		}
 	}
