@@ -125,7 +125,8 @@ public class ObjectPool : MonoBehaviour
 					// pooledObject.transform.parent = null;
 					pooledObject.transform.SetParent(null);
 					pooledObject.SetActive(true);
-					
+					pooledObject.name = objectType; // set the name to be the same as the prefab so it can be re-pooled later
+
 					return pooledObject;
 					
 				} else if(!onlyPooled) {
@@ -142,7 +143,7 @@ public class ObjectPool : MonoBehaviour
 	}
 	
 	/// <summary>
-	/// Pools the object specified.  Will not be pooled if there is no prefab of that type.
+	/// Pools the object specified.  Will not be pooled if there is no prefab of that name.
 	/// </summary>
 	/// <param name='obj'>
 	/// Object to be pooled.
