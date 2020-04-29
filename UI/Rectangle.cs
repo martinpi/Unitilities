@@ -26,53 +26,52 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+namespace Unitilities.UI {
 
-[AddComponentMenu("UI/Rectangle", 55)]
-[RequireComponent (typeof (RectTransform))]
-[ExecuteInEditMode]
-public class Rectangle : Graphic 
-{
-	protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
-	{
-		UIVertex[] vbo = new UIVertex[vertices.Length];
-		for (int i = 0; i < vertices.Length; i++)
-		{
-			var vert = UIVertex.simpleVert;
-			vert.color = color;
-			vert.position = vertices[i];
-			vert.uv0 = uvs[i];
-			vbo[i] = vert;
+
+	[AddComponentMenu("UI/Rectangle", 55)]
+	[RequireComponent(typeof(RectTransform))]
+	[ExecuteInEditMode]
+	public class Rectangle : Graphic {
+		protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs) {
+			UIVertex[] vbo = new UIVertex[vertices.Length];
+			for (int i = 0; i < vertices.Length; i++) {
+				var vert = UIVertex.simpleVert;
+				vert.color = color;
+				vert.position = vertices[i];
+				vert.uv0 = uvs[i];
+				vbo[i] = vert;
+			}
+			return vbo;
 		}
-		return vbo;
-	}
 
-	protected override void OnPopulateMesh(VertexHelper vh)
-	{
+		protected override void OnPopulateMesh(VertexHelper vh) {
 
-		float w = rectTransform.rect.width/2f;
-		float h = rectTransform.rect.height/2f;
+			float w = rectTransform.rect.width / 2f;
+			float h = rectTransform.rect.height / 2f;
 
-		Vector2[] uv = new Vector2[] {
-			new Vector2( 0f,	0f),
-			new Vector2( 0f,	1f),
-			new Vector2( 1f,	1f),
-			new Vector2( 1f,	0f)
+			Vector2[] uv = new Vector2[] {
+			new Vector2( 0f,    0f),
+			new Vector2( 0f,    1f),
+			new Vector2( 1f,    1f),
+			new Vector2( 1f,    0f)
 		};
 
-		Vector2[] verts = new Vector2[] {
-			new Vector2(-w,	-h),
-			new Vector2(-w,	 h),
-			new Vector2( w,	 h),
-			new Vector2( w,	-h)
+			Vector2[] verts = new Vector2[] {
+			new Vector2(-w, -h),
+			new Vector2(-w,  h),
+			new Vector2( w,  h),
+			new Vector2( w, -h)
 		};
 
-		vh.Clear();
-		vh.AddUIVertexQuad(SetVbo(
-			new[] { verts[0], verts[1], verts[2], verts[3] }, 
-			new[] { uv[0], uv[1], uv[2], uv[3] }));
-//		vh.AddUIVertexQuad(SetVbo(
-//			new[] { verts[0], verts[3], verts[4], verts[5] }, 
-//			new[] { uv[0], uv[3], uv[4], uv[5] }));
+			vh.Clear();
+			vh.AddUIVertexQuad(SetVbo(
+				new[] { verts[0], verts[1], verts[2], verts[3] },
+				new[] { uv[0], uv[1], uv[2], uv[3] }));
+			//		vh.AddUIVertexQuad(SetVbo(
+			//			new[] { verts[0], verts[3], verts[4], verts[5] }, 
+			//			new[] { uv[0], uv[3], uv[4], uv[5] }));
 
+		}
 	}
 }

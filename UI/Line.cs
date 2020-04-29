@@ -26,7 +26,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-namespace Unitilities {
+namespace Unitilities.UI {
 
 	[AddComponentMenu("UI/Line", 56)]
 	[RequireComponent (typeof (RectTransform))]

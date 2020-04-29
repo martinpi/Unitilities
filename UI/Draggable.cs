@@ -30,43 +30,64 @@ using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 namespace Unitilities.UI {
-	[AddComponentMenu("UI/Drag Area", 51)]
+
+	[AddComponentMenu("UI/Draggable", 55)]
 	[RequireComponent(typeof(RectTransform))]
-	public class DragArea : Selectable, IBeginDragHandler, IDragHandler, IEndDragHandler {
+	public class Draggable : Selectable, IBeginDragHandler, IDragHandler, IEndDragHandler {
 
-		public RectTransform HandleRect = null;
+		private RectTransform HandleRect = null;
+		private RectTransform ParentRect = null;
 
-		[SerializeField]
-		public float MinValueX = 0f;
-		[SerializeField]
-		public float MinValueY = 0f;
-		[SerializeField]
-		public float MaxValueX = 1f;
-		[SerializeField]
-		public float MaxValueY = 1f;
+		private float MinValueX = 0f;
+		private float MinValueY = 0f;
+		private float MaxValueX = 1f;
+		private float MaxValueY = 1f;
+
+		private Vector2 _offset = Vector2.zero;
+		private Vector3[] _worldCorners;
 
 		private Vector2 _value;
 		public Vector2 Value { get { return _value; } set { SetValue(value); } }
 
 		[Serializable]
 		public class DragEvent : UnityEvent<Vector2> { }
-		public DragEvent onValueChanged = new DragEvent();
+		public DragEvent onDrag = new DragEvent();
+		public DragEvent onBeginDrag = new DragEvent();
+		public DragEvent onEndDrag = new DragEvent();
 
+		protected override void Start() {
+			//		base.Start();
+			ParentRect = transform.parent.GetComponent<RectTransform>();
+			HandleRect = gameObject.GetComponent<RectTransform>();
+			_worldCorners = new Vector3[4];
+		}
 
 		public void OnBeginDrag(PointerEventData eventData) {
+			Vector2 ppos = eventData.position;
+			_offset.x = ppos.x - transform.position.x;
+			_offset.y = ppos.y - transform.position.y;
+			onBeginDrag.Invoke(_value);
 			SetFromEvent(eventData);
 		}
 		public void OnEndDrag(PointerEventData eventData) {
+			onEndDrag.Invoke(_value);
 		}
 		public void OnDrag(PointerEventData eventData) {
 			SetFromEvent(eventData);
 		}
 		private void SetFromEvent(PointerEventData eventData) {
-			Vector2 ppos = eventData.position;
-			Vector3 fpos = HandleRect.transform.parent.GetComponent<RectTransform>().position;
-			Vector2 wpos = new Vector2(ppos.x - fpos.x, ppos.y - fpos.y);
+			Vector2 npos = eventData.position - _offset;
+			ParentRect.GetWorldCorners(_worldCorners);
 
-			SetValue(LocalToValue(wpos));
+			npos.x = Mathf.Clamp(npos.x,
+				_worldCorners[0].x + HandleRect.rect.size.x,
+				_worldCorners[2].x - HandleRect.rect.size.x);
+			npos.y = Mathf.Clamp(npos.y,
+				_worldCorners[0].y + HandleRect.rect.size.y,
+				_worldCorners[1].y - HandleRect.rect.size.y);
+
+			transform.position = npos;
+			SetValue(LocalToValue(transform.position));
 		}
 
 		private Vector2 ValueToLocal(Vector2 value) {
@@ -74,7 +95,7 @@ namespace Unitilities.UI {
 			value.y = Mathf.Clamp(value.y, MinValueY, MaxValueY);
 
 			Vector2 targetPosition;
-			Vector2 size = HandleRect.transform.parent.GetComponent<RectTransform>().rect.size;
+			Vector2 size = ParentRect.rect.size;
 
 			targetPosition.x = size.x * (((value.x - MinValueX) / (MaxValueX - MinValueX)) - 0.5f);
 			targetPosition.y = size.y * (((value.y - MinValueY) / (MaxValueY - MinValueY)) - 0.5f);
@@ -83,7 +104,7 @@ namespace Unitilities.UI {
 		}
 		private Vector2 LocalToValue(Vector2 local) {
 			Vector2 value;
-			Vector2 size = HandleRect.transform.parent.GetComponent<RectTransform>().rect.size;
+			Vector2 size = ParentRect.rect.size;
 
 			value.x = (local.x / size.x + 0.5f) * (MaxValueX - MinValueX) + MinValueX;
 			value.y = (local.y / size.y + 0.5f) * (MaxValueY - MinValueY) + MinValueY;
@@ -96,8 +117,8 @@ namespace Unitilities.UI {
 
 		private void SetValue(Vector2 value) {
 			_value = value;
-			HandleRect.localPosition = ValueToLocal(_value);
-			onValueChanged.Invoke(_value);
+			onDrag.Invoke(_value);
 		}
+
 	}
 }

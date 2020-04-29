@@ -4,46 +4,49 @@ using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using System.Collections;
 
-[RequireComponent (typeof (RectTransform))]
-public class OnDragOver : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+namespace Unitilities.UI {
 
-//	private RectTransform m_RectTransform;
-//	public DragAble m_TargetDragAble = null;
+	[RequireComponent(typeof(RectTransform))]
+	public class OnDragOver : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
-	void Awake () {
-//		if (m_TargetDragAble != null) {
-//			m_TargetDragAble.onDrag.AddListener(OnDrag);
-//		}
-//		m_RectTransform = transform as RectTransform;
-	}
+		//	private RectTransform m_RectTransform;
+		//	public DragAble m_TargetDragAble = null;
 
-	public virtual void OnPointerEnter(PointerEventData data) {
-		if (data.dragging && data.pointerDrag != null) {
-			Debug.Log("Dragged inside: "+data.pointerDrag.name);
-
-//			var currentOverGo = data.pointerCurrentRaycast.gameObject;
-
-		}
-	}
-	public virtual void OnPointerExit(PointerEventData data) {
-		if (data.dragging && data.pointerDrag != null) {
-			Debug.Log("Dragged outside: "+data.pointerDrag.name);
+		void Awake() {
+			//		if (m_TargetDragAble != null) {
+			//			m_TargetDragAble.onDrag.AddListener(OnDrag);
+			//		}
+			//		m_RectTransform = transform as RectTransform;
 		}
 
-	}
+		public virtual void OnPointerEnter(PointerEventData data) {
+			if (data.dragging && data.pointerDrag != null) {
+				Debug.Log("Dragged inside: " + data.pointerDrag.name);
+
+				//			var currentOverGo = data.pointerCurrentRaycast.gameObject;
+
+			}
+		}
+		public virtual void OnPointerExit(PointerEventData data) {
+			if (data.dragging && data.pointerDrag != null) {
+				Debug.Log("Dragged outside: " + data.pointerDrag.name);
+			}
+
+		}
 
 
-//	protected virtual void OnDrag(Vector2 location) {
-//		Debug.Log(location);
-//
-//		Vector3 localLocation = (m_RectTransform.worldToLocalMatrix * location.Vector3XY());
-//
-//		if (m_RectTransform.rect.Contains(localLocation.Vector2XY()))
-//			Debug.Log("inside");
-//
-//	}
-	
-	void Update () {
-	
+		//	protected virtual void OnDrag(Vector2 location) {
+		//		Debug.Log(location);
+		//
+		//		Vector3 localLocation = (m_RectTransform.worldToLocalMatrix * location.Vector3XY());
+		//
+		//		if (m_RectTransform.rect.Contains(localLocation.Vector2XY()))
+		//			Debug.Log("inside");
+		//
+		//	}
+
+		void Update() {
+
+		}
 	}
 }

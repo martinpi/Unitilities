@@ -27,37 +27,39 @@ Based on this tutorial: https://www.youtube.com/watch?v=c47QYgsJrWc&app=desktop
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
+namespace Unitilities.UI {
+	public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
 
-	public static GameObject DraggedObject = null;
+		public static GameObject DraggedObject = null;
 
-	private Vector3 _offset;
-	private Vector3 _originalPosition;
-	private Transform _originalParent = null;
-	
-	public void OnBeginDrag(PointerEventData eventData) {
-		DraggedObject = gameObject;
-		Vector2 ppos = eventData.position;
-		_offset = new Vector3(ppos.x - transform.position.x, 
-		                      ppos.y - transform.position.y, 
-		                      0);
-		_originalPosition = transform.position; 
-		_originalParent = transform.parent;
+		private Vector3 _offset;
+		private Vector3 _originalPosition;
+		private Transform _originalParent = null;
 
-		transform.SetParent(transform.root);
+		public void OnBeginDrag(PointerEventData eventData) {
+			DraggedObject = gameObject;
+			Vector2 ppos = eventData.position;
+			_offset = new Vector3(ppos.x - transform.position.x,
+								  ppos.y - transform.position.y,
+								  0);
+			_originalPosition = transform.position;
+			_originalParent = transform.parent;
 
-		GetComponent<CanvasGroup>().blocksRaycasts = false;
-	}
-	public void OnDrag(PointerEventData eventData) {
-		transform.position = Input.mousePosition - _offset;
-	}
-	public void OnEndDrag(PointerEventData eventData) {
-		DraggedObject = null;
-		
-		if (transform.parent == transform.root) {
-			transform.SetParent(_originalParent);
-			transform.position = _originalPosition;
+			transform.SetParent(transform.root);
+
+			GetComponent<CanvasGroup>().blocksRaycasts = false;
 		}
-		GetComponent<CanvasGroup>().blocksRaycasts = true;
+		public void OnDrag(PointerEventData eventData) {
+			transform.position = Input.mousePosition - _offset;
+		}
+		public void OnEndDrag(PointerEventData eventData) {
+			DraggedObject = null;
+
+			if (transform.parent == transform.root) {
+				transform.SetParent(_originalParent);
+				transform.position = _originalPosition;
+			}
+			GetComponent<CanvasGroup>().blocksRaycasts = true;
+		}
 	}
 }

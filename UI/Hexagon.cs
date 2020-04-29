@@ -26,46 +26,43 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+namespace Unitilities.UI {
 
-[AddComponentMenu("UI/Hexagon", 56)]
-[RequireComponent (typeof (RectTransform))]
-[ExecuteInEditMode]
-public class Hexagon : Graphic 
-{
-	protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
-	{
-		UIVertex[] vbo = new UIVertex[4];
-		for (int i = 0; i < vertices.Length; i++)
-		{
-			var vert = UIVertex.simpleVert;
-			vert.color = color;
-			vert.position = vertices[i];
-			vert.uv0 = uvs[i];
-			vbo[i] = vert;
+	[AddComponentMenu("UI/Hexagon", 56)]
+	[RequireComponent(typeof(RectTransform))]
+	[ExecuteInEditMode]
+	public class Hexagon : Graphic {
+		protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs) {
+			UIVertex[] vbo = new UIVertex[4];
+			for (int i = 0; i < vertices.Length; i++) {
+				var vert = UIVertex.simpleVert;
+				vert.color = color;
+				vert.position = vertices[i];
+				vert.uv0 = uvs[i];
+				vbo[i] = vert;
+			}
+			return vbo;
 		}
-		return vbo;
-	}
 
-	protected override void OnPopulateMesh(VertexHelper vh)
-	{
+		protected override void OnPopulateMesh(VertexHelper vh) {
 
-		float r = rectTransform.rect.width/2f;
-		float h = Mathf.Sin(2f * Mathf.PI / 6f) * 2f * r;
-		float t = h/2f;
+			float r = rectTransform.rect.width / 2f;
+			float h = Mathf.Sin(2f * Mathf.PI / 6f) * 2f * r;
+			float t = h / 2f;
 
-		float rr = 0.5f;
-		float p = h/2f - rr;
-		float s = 3f/2f * rr;
-		Vector2[] uv = new Vector2[] {
-			new Vector2(2f * rr - s, 	p),
-			new Vector2(0f, 			rr),
-			new Vector2(2f * rr - s, 	2f * rr - p),
-			new Vector2(s, 				2f * rr - p),
-			new Vector2(1f, 			rr),
-			new Vector2(s,				p)
+			float rr = 0.5f;
+			float p = h / 2f - rr;
+			float s = 3f / 2f * rr;
+			Vector2[] uv = new Vector2[] {
+			new Vector2(2f * rr - s,    p),
+			new Vector2(0f,             rr),
+			new Vector2(2f * rr - s,    2f * rr - p),
+			new Vector2(s,              2f * rr - p),
+			new Vector2(1f,             rr),
+			new Vector2(s,              p)
 		};
 
-		Vector2[] verts = new Vector2[] {
+			Vector2[] verts = new Vector2[] {
 			new Vector2(-r/2f, -t),
 			new Vector2(-r, 0f),
 			new Vector2(-r/2f,  t),
@@ -74,13 +71,14 @@ public class Hexagon : Graphic
 			new Vector2( r/2f, -t)
 		};
 
-		vh.Clear();
-		vh.AddUIVertexQuad(SetVbo(
-			new[] { verts[0], verts[1], verts[2], verts[3] }, 
-			new[] { uv[0], uv[1], uv[2], uv[3] }));
-		vh.AddUIVertexQuad(SetVbo(
-			new[] { verts[0], verts[3], verts[4], verts[5] }, 
-			new[] { uv[0], uv[3], uv[4], uv[5] }));
+			vh.Clear();
+			vh.AddUIVertexQuad(SetVbo(
+				new[] { verts[0], verts[1], verts[2], verts[3] },
+				new[] { uv[0], uv[1], uv[2], uv[3] }));
+			vh.AddUIVertexQuad(SetVbo(
+				new[] { verts[0], verts[3], verts[4], verts[5] },
+				new[] { uv[0], uv[3], uv[4], uv[5] }));
 
+		}
 	}
 }

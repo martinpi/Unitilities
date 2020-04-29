@@ -36,7 +36,7 @@ namespace Unitilities {
 				if(screenshot != null && saveToFileName!=null) {
 					if(Application.platform==RuntimePlatform.OSXPlayer || 
 						Application.platform==RuntimePlatform.WindowsPlayer && 
-						Application.platform!=RuntimePlatform.LinuxPlayer 
+						Application.platform!=RuntimePlatform.LinuxPlayer
 						|| Application.isEditor) {
 						byte[] bytes;
 						if(saveToFileName.ToLower().EndsWith(".jpg"))

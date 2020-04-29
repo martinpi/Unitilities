@@ -28,16 +28,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class DragWell : MonoBehaviour, IDropHandler {
+namespace Unitilities.UI {
+	public class DragWell : MonoBehaviour, IDropHandler {
 
-	public GameObject Draggable { get { if (transform.childCount > 0) return transform.GetChild(0).gameObject; else return null; } }
+		public GameObject Draggable { get { if (transform.childCount > 0) return transform.GetChild(0).gameObject; else return null; } }
 
-	#region IDropHandler implementation
-	public void OnDrop (PointerEventData eventData) {
-		if (Draggable == null) {
-			DragHandler.DraggedObject.transform.SetParent(transform, true);
-			ExecuteEvents.ExecuteHierarchy<IHasChanged>(gameObject, null, (x,y) => { x.HasChanged(y); } );
+		#region IDropHandler implementation
+		public void OnDrop(PointerEventData eventData) {
+			if (Draggable == null) {
+				DragHandler.DraggedObject.transform.SetParent(transform, true);
+				ExecuteEvents.ExecuteHierarchy<IHasChanged>(gameObject, null, (x, y) => { x.HasChanged(y); });
+			}
 		}
+		#endregion
 	}
-	#endregion
 }
