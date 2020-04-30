@@ -3,6 +3,8 @@ The MIT License
 
 Copyright (c) 2015 Martin Pichlmair
 
+2019: Rewrote based on https://forum.unity.com/threads/drag-window-script-with-window-clamped-within-canvas.453340/
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -35,90 +37,43 @@ namespace Unitilities.UI {
 	[RequireComponent(typeof(RectTransform))]
 	public class Draggable : Selectable, IBeginDragHandler, IDragHandler, IEndDragHandler {
 
-		private RectTransform HandleRect = null;
-		private RectTransform ParentRect = null;
-
-		private float MinValueX = 0f;
-		private float MinValueY = 0f;
-		private float MaxValueX = 1f;
-		private float MaxValueY = 1f;
+		private RectTransform _rect = null;
+		private RectTransform _parentRect = null;
 
 		private Vector2 _offset = Vector2.zero;
-		private Vector3[] _worldCorners;
-
-		private Vector2 _value;
-		public Vector2 Value { get { return _value; } set { SetValue(value); } }
 
 		[Serializable]
-		public class DragEvent : UnityEvent<Vector2> { }
+		public class DragEvent : UnityEvent<Draggable> { }
 		public DragEvent onDrag = new DragEvent();
 		public DragEvent onBeginDrag = new DragEvent();
 		public DragEvent onEndDrag = new DragEvent();
 
 		protected override void Start() {
-			//		base.Start();
-			ParentRect = transform.parent.GetComponent<RectTransform>();
-			HandleRect = gameObject.GetComponent<RectTransform>();
-			_worldCorners = new Vector3[4];
+			_parentRect = transform.parent.GetComponent<RectTransform>();
+			_rect = gameObject.GetComponent<RectTransform>();
 		}
 
 		public void OnBeginDrag(PointerEventData eventData) {
-			Vector2 ppos = eventData.position;
-			_offset.x = ppos.x - transform.position.x;
-			_offset.y = ppos.y - transform.position.y;
-			onBeginDrag.Invoke(_value);
-			SetFromEvent(eventData);
+			RectTransformUtility.ScreenPointToLocalPointInRectangle(_rect, eventData.position, eventData.pressEventCamera, out _offset);
+			onBeginDrag.Invoke(this);
 		}
 		public void OnEndDrag(PointerEventData eventData) {
-			onEndDrag.Invoke(_value);
+			onEndDrag.Invoke(this);
 		}
 		public void OnDrag(PointerEventData eventData) {
-			SetFromEvent(eventData);
+			Vector2 localPointerPosition;
+			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_parentRect, eventData.position, eventData.pressEventCamera, out localPointerPosition)) {
+
+				Vector2 clampedPosition = localPointerPosition - _offset;
+				// clampedPosition.x = (ParentRect.rect.width * 0.5f) - (HandleRect.rect.width * (1 - HandleRect.pivot.x));
+				// clampedPosition.x = (-ParentRect.rect.width * 0.5f) + (HandleRect.rect.width * HandleRect.pivot.x);
+				// clampedPosition.y = (ParentRect.rect.height * 0.5f) - (HandleRect.rect.height * (1 - HandleRect.pivot.y));
+				// clampedPosition.y = (-ParentRect.rect.height * 0.5f) + (HandleRect.rect.height * HandleRect.pivot.y);
+				
+				_rect.localPosition = clampedPosition;
+			}
+
+			onDrag.Invoke(this);
 		}
-		private void SetFromEvent(PointerEventData eventData) {
-			Vector2 npos = eventData.position - _offset;
-			ParentRect.GetWorldCorners(_worldCorners);
-
-			npos.x = Mathf.Clamp(npos.x,
-				_worldCorners[0].x + HandleRect.rect.size.x,
-				_worldCorners[2].x - HandleRect.rect.size.x);
-			npos.y = Mathf.Clamp(npos.y,
-				_worldCorners[0].y + HandleRect.rect.size.y,
-				_worldCorners[1].y - HandleRect.rect.size.y);
-
-			transform.position = npos;
-			SetValue(LocalToValue(transform.position));
-		}
-
-		private Vector2 ValueToLocal(Vector2 value) {
-			value.x = Mathf.Clamp(value.x, MinValueX, MaxValueX);
-			value.y = Mathf.Clamp(value.y, MinValueY, MaxValueY);
-
-			Vector2 targetPosition;
-			Vector2 size = ParentRect.rect.size;
-
-			targetPosition.x = size.x * (((value.x - MinValueX) / (MaxValueX - MinValueX)) - 0.5f);
-			targetPosition.y = size.y * (((value.y - MinValueY) / (MaxValueY - MinValueY)) - 0.5f);
-
-			return targetPosition;
-		}
-		private Vector2 LocalToValue(Vector2 local) {
-			Vector2 value;
-			Vector2 size = ParentRect.rect.size;
-
-			value.x = (local.x / size.x + 0.5f) * (MaxValueX - MinValueX) + MinValueX;
-			value.y = (local.y / size.y + 0.5f) * (MaxValueY - MinValueY) + MinValueY;
-
-			value.x = Mathf.Clamp(value.x, MinValueX, MaxValueX);
-			value.y = Mathf.Clamp(value.y, MinValueY, MaxValueY);
-
-			return value;
-		}
-
-		private void SetValue(Vector2 value) {
-			_value = value;
-			onDrag.Invoke(_value);
-		}
-
 	}
 }
