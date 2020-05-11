@@ -57,7 +57,8 @@ namespace Unitilities.Pathfinding {
 		}
 
 		public LinkedList<Pathfinding.TilemapPathNode> FindPath( Vector3Int from, Vector3Int to ) {
-			// return _aStar.Search(from.x-_offset.x, from.y-_offset.y, to.x-_offset.x, to.y-_offset.y, walkableMap);
+			BoundsInt bounds = walkableMap.cellBounds;
+			if (!bounds.Contains(from) || !bounds.Contains(to)) return null;
 			return _aStar.Search(from.x-_offset.x, from.y-_offset.y, to.x-_offset.x, to.y-_offset.y, walkableMap);
 		}
 
