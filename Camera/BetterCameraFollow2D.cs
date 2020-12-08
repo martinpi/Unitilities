@@ -71,7 +71,7 @@ namespace Unitilities
 			if (updateLookAheadTarget)
 				m_LookAheadPos = lookAheadFactor*moveDirection;
 			else
-				m_LookAheadPos = Vector3.MoveTowards(m_LookAheadPos, Vector3.zero, Time.deltaTime*lookAheadReturnSpeed);
+				m_LookAheadPos = Vector3.MoveTowards(m_LookAheadPos, Vector3.zero, UnityEngine.Time.deltaTime*lookAheadReturnSpeed);
 
 			Vector3 aheadTargetPos = target.position + m_LookAheadPos + Vector3.forward*m_Offset.z;
 			Vector3 newPos = Vector3.SmoothDamp(transform.position, aheadTargetPos, ref m_CurrentVelocity, damping );

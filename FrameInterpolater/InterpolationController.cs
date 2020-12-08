@@ -62,7 +62,7 @@ namespace Unitilities.FrameInterpolater {
 
 		public void FixedUpdate() {
 			m_newTimeIndex = OldTimeIndex();
-			m_lastFixedUpdateTimes[m_newTimeIndex] = Time.fixedTime;
+			m_lastFixedUpdateTimes[m_newTimeIndex] = UnityEngine.Time.fixedTime;
 		}
 
 		public void Update() {
@@ -70,7 +70,7 @@ namespace Unitilities.FrameInterpolater {
 			float olderTime = m_lastFixedUpdateTimes[OldTimeIndex()];
 
 			if (newerTime != olderTime) {
-				m_interpolationFactor = (Time.time - newerTime) / (newerTime - olderTime);
+				m_interpolationFactor = (UnityEngine.Time.time - newerTime) / (newerTime - olderTime);
 			} else {
 				m_interpolationFactor = 1;
 			}
