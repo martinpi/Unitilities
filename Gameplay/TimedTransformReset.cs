@@ -17,14 +17,14 @@ namespace Unitilities.Gameplay {
 		bool _active;
 
 		void OnEnable() {
-			_startTime = Time.time;
+			_startTime = UnityEngine.Time.time;
 			_position = Target.position;
 			_scale = Target.localScale;
 			_rotation = Target.rotation;
 		}
 
 		void Update() {
-			if (Time.time - _startTime > Timeout) {
+			if (UnityEngine.Time.time - _startTime > Timeout) {
 				Target.position = _position;
 				Target.localScale = _scale;
 				Target.rotation = _rotation;

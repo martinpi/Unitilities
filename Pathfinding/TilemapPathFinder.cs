@@ -30,7 +30,8 @@ namespace Unitilities.Pathfinding {
 
 	public class TilemapPathFinder : MonoBehaviour {
 
-        public Tilemap walkableMap;
+		public Tilemap walkableMap;
+		public Tilemap wallMap;
 
 		private Vector3Int _offset;
 		private Pathfinding.TilemapPathNode[,] _grid;
@@ -68,7 +69,7 @@ namespace Unitilities.Pathfinding {
 			for (int x = bounds.min.x; x < bounds.max.x; ++x) {
 				for (int y = bounds.min.y; y < bounds.max.y; ++y) {
                     Vector3Int pos = new Vector3Int(x,y,0);
-					SetPathNode(x-bounds.min.x, y-bounds.min.y, walkableMap.HasTile(pos));
+					SetPathNode(x-bounds.min.x, y-bounds.min.y, walkableMap.HasTile(pos) && !wallMap.HasTile(pos));
 				}
 			}
 			UpdateGrid();

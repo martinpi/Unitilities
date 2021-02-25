@@ -71,7 +71,7 @@ namespace Unitilities
 			if (updateLookAheadTarget)
 				m_LookAheadPos = lookAheadFactor*moveDirection;
 			else
-				m_LookAheadPos = Vector3.MoveTowards(m_LookAheadPos, Vector3.zero, Time.deltaTime*lookAheadReturnSpeed);
+				m_LookAheadPos = Vector3.MoveTowards(m_LookAheadPos, Vector3.zero, UnityEngine.Time.deltaTime*lookAheadReturnSpeed);
 
 			float speedZoom = Mathf.Clamp01(moveDirection.magnitude - speedMin)/(speedMax-speedMin) * speedZoomMax;
 
