@@ -25,29 +25,33 @@ THE SOFTWARE.
 using UnityEngine;
 using System.Collections;
 
-public static class GridUtils {
-	public static float[,] average(float[,] grid, int radius, float strength) {
-		float f = Mathf.Clamp01(strength);
-		float p = 1f/(float)((2*radius+1)*(2*radius+1));
-		float a = 0f;
+namespace Unitilities.Grid {
+	public static class GridUtils {
+		public static float[,] average(float[,] grid, int radius, float strength) {
+			float f = Mathf.Clamp01(strength);
+			float p = 1f / (float)((2 * radius + 1) * (2 * radius + 1));
+			float a = 0f;
 
-		float[,] g = new float[grid.GetLength(0), grid.GetLength(1)];
+			float[,] g = new float[grid.GetLength(0), grid.GetLength(1)];
 
-		for (int x=0; x<grid.GetLength(0); ++x) {
-			for (int y=0; y<grid.GetLength(1); ++y) {
+			for (int x = 0; x < grid.GetLength(0); ++x) {
+				for (int y = 0; y < grid.GetLength(1); ++y) {
 
-				a = 0f;
-				for (int xx=-radius; xx<=radius; ++xx) {
-					for (int yy=-radius; yy<=radius; ++yy) {
-						int px = Mathi.Clamp(xx+x, 0, grid.GetLength(0)-1);
-						int py = Mathi.Clamp(yy+y, 0, grid.GetLength(1)-1);
+					a = 0f;
+					for (int xx = -radius; xx <= radius; ++xx) {
+						for (int yy = -radius; yy <= radius; ++yy) {
+							int px = Mathi.Clamp(xx + x, 0, grid.GetLength(0) - 1);
+							int py = Mathi.Clamp(yy + y, 0, grid.GetLength(1) - 1);
 
-						a += grid[px,py] * p;
+							a += grid[px, py] * p;
+						}
 					}
+					g[x, y] = (1.0f - f) * grid[x, y] + f * a;
 				}
-				g[x,y] = (1.0f-f) * grid[x,y] + f * a;
 			}
+			return g;
 		}
-		return g;
 	}
+
 }
+
